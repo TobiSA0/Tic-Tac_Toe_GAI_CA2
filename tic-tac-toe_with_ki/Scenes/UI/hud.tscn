@@ -1,0 +1,150 @@
+[gd_scene load_steps=8 format=3 uid="uid://b4yxugplpvdbd"]
+
+[ext_resource type="Script" path="res://Skripts/UI/hud.gd" id="1_aheat"]
+[ext_resource type="Texture2D" uid="uid://cmvx566hb6kib" path="res://Assets/O_Picture.png" id="1_nx4qr"]
+[ext_resource type="Texture2D" uid="uid://c78621jp1ae16" path="res://Assets/X_Picture.png" id="2_mqdjc"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_yxap3"]
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_o0qag"]
+font_size = 50
+
+[sub_resource type="LabelSettings" id="LabelSettings_0wfmc"]
+font_size = 45
+
+[sub_resource type="LabelSettings" id="LabelSettings_10rs0"]
+font_size = 90
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -4.0
+offset_top = -5.0
+offset_right = -4.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+script = ExtResource("1_aheat")
+
+[node name="Selector_1_name2" type="Label" parent="."]
+layout_mode = 0
+offset_left = 202.0
+offset_top = 586.0
+offset_right = 326.0
+offset_bottom = 628.0
+text = "Spieler 2
+"
+label_settings = SubResource("LabelSettings_yxap3")
+
+[node name="Selector_1_name" type="Label" parent="."]
+layout_mode = 0
+offset_left = 201.0
+offset_top = 475.0
+offset_right = 325.0
+offset_bottom = 517.0
+text = "Spieler 1"
+label_settings = SubResource("LabelSettings_yxap3")
+
+[node name="Selector_2" type="OptionButton" parent="."]
+layout_mode = 0
+offset_left = 359.0
+offset_top = 593.0
+offset_right = 663.0
+offset_bottom = 625.0
+selected = 3
+item_count = 4
+popup/item_0/text = "Human"
+popup/item_1/text = "MinMax"
+popup/item_1/id = 1
+popup/item_2/text = "MCTS"
+popup/item_2/id = 2
+popup/item_3/text = "None"
+popup/item_3/id = 3
+
+[node name="Selector_1" type="OptionButton" parent="."]
+layout_mode = 0
+offset_left = 358.0
+offset_top = 482.0
+offset_right = 662.0
+offset_bottom = 514.0
+selected = 3
+item_count = 4
+popup/item_0/text = "Human"
+popup/item_1/text = "MinMax"
+popup/item_1/id = 1
+popup/item_2/text = "MCTS"
+popup/item_2/id = 2
+popup/item_3/text = "None"
+popup/item_3/id = 3
+
+[node name="Play_Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 251.0
+offset_top = 691.0
+offset_right = 556.0
+offset_bottom = 771.0
+scale = Vector2(0.798527, 0.825834)
+theme_override_font_sizes/font_size = 50
+text = "PLAY"
+
+[node name="Reset_Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 288.0
+offset_top = 787.0
+offset_right = 504.0
+offset_bottom = 846.0
+scale = Vector2(0.798527, 0.825834)
+theme_override_font_sizes/font_size = 32
+text = "Relod"
+
+[node name="Ingame_text" type="Label" parent="."]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 902.0
+offset_right = 696.0
+offset_bottom = 974.0
+text = "\"Name\"  your Turn
+"
+label_settings = SubResource("LabelSettings_o0qag")
+
+[node name="Choose_player_text" type="Label" parent="."]
+layout_mode = 0
+offset_left = 138.0
+offset_top = 359.0
+offset_right = 589.0
+offset_bottom = 431.0
+text = "Select the Players:
+"
+label_settings = SubResource("LabelSettings_0wfmc")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 1
+offset_left = 127.0
+offset_top = 109.0
+offset_right = 649.0
+offset_bottom = 233.0
+text = "TIC TAC TOE
+"
+label_settings = SubResource("LabelSettings_10rs0")
+
+[node name="O" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 135.0
+offset_top = 470.0
+offset_right = 190.0
+offset_bottom = 525.0
+texture = ExtResource("1_nx4qr")
+expand_mode = 1
+
+[node name="X" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 138.0
+offset_top = 579.0
+offset_right = 193.0
+offset_bottom = 634.0
+texture = ExtResource("2_mqdjc")
+expand_mode = 1

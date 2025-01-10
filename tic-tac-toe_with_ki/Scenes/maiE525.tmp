@@ -1,0 +1,48 @@
+[gd_scene load_steps=11 format=3 uid="uid://b70lqbvuw8kbu"]
+
+[ext_resource type="PackedScene" uid="uid://3hq1we7nm4l3" path="res://Scenes/Tic-Tac_Toe_elements/play_field.tscn" id="1_8i1mm"]
+[ext_resource type="Script" path="res://Skripts/Util_Skripts/Game_Manager.gd" id="1_nj5h8"]
+[ext_resource type="PackedScene" uid="uid://dsskgw5cr58hl" path="res://Scenes/UI/ui_layer.tscn" id="2_cndu8"]
+[ext_resource type="PackedScene" uid="uid://bh365v7kvqxck" path="res://Scenes/player.tscn" id="4_3pvno"]
+[ext_resource type="Script" path="res://Skripts/Game_State_Machine/state_machine.gd" id="5_ga2k8"]
+[ext_resource type="Script" path="res://Skripts/Game_State_Machine/States/Idle.gd" id="6_7sj65"]
+[ext_resource type="Script" path="res://Skripts/Game_State_Machine/States/turn.gd" id="7_t851i"]
+[ext_resource type="Script" path="res://Skripts/Game_State_Machine/States/check.gd" id="8_lwj1s"]
+[ext_resource type="Script" path="res://Skripts/Game_State_Machine/States/game_fertig.gd" id="9_u3ci1"]
+[ext_resource type="Script" path="res://Skripts/Game_State_Machine/States/player_turn.gd" id="10_37g8p"]
+
+[node name="Main_Scene" type="Node2D" node_paths=PackedStringArray("state_machine", "idle")]
+script = ExtResource("1_nj5h8")
+state_machine = NodePath("State_Machine")
+idle = NodePath("State_Machine/Idle")
+
+[node name="Play_Field" parent="." instance=ExtResource("1_8i1mm")]
+position = Vector2(1370, 549)
+metadata/_edit_group_ = true
+
+[node name="UI_Layer" parent="." instance=ExtResource("2_cndu8")]
+
+[node name="Player1" parent="." node_paths=PackedStringArray("game_manger") instance=ExtResource("4_3pvno")]
+visible = false
+game_manger = NodePath("..")
+
+[node name="Player2" parent="." node_paths=PackedStringArray("game_manger") instance=ExtResource("4_3pvno")]
+game_manger = NodePath("..")
+
+[node name="State_Machine" type="Node" parent="."]
+script = ExtResource("5_ga2k8")
+
+[node name="Idle" type="Node" parent="State_Machine"]
+script = ExtResource("6_7sj65")
+
+[node name="Take_Turn" type="Node" parent="State_Machine"]
+script = ExtResource("7_t851i")
+
+[node name="Check_Turn" type="Node" parent="State_Machine"]
+script = ExtResource("8_lwj1s")
+
+[node name="Game_Finished" type="Node" parent="State_Machine"]
+script = ExtResource("9_u3ci1")
+
+[node name="Player_Turn" type="Node" parent="State_Machine"]
+script = ExtResource("10_37g8p")

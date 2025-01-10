@@ -1,0 +1,41 @@
+[gd_scene load_steps=4 format=3 uid="uid://3hq1we7nm4l3"]
+
+[ext_resource type="Texture2D" uid="uid://osnehbf44ciy" path="res://Assets/Play_field.png" id="1_7ep7a"]
+[ext_resource type="Script" path="res://Skripts/Util_Skripts/play_field.gd" id="1_r1nbu"]
+[ext_resource type="PackedScene" uid="uid://cqde76ftv6keo" path="res://Scenes/Tic-Tac_Toe_elements/field.tscn" id="2_vld80"]
+
+[node name="Play_Field" type="Node2D"]
+script = ExtResource("1_r1nbu")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(1.492, 1.492)
+texture = ExtResource("1_7ep7a")
+
+[node name="Field_Points" type="Node2D" parent="."]
+
+[node name="Field" parent="Field_Points" instance=ExtResource("2_vld80")]
+position = Vector2(-273, -240)
+
+[node name="Field2" parent="Field_Points" instance=ExtResource("2_vld80")]
+position = Vector2(-5, -235)
+
+[node name="Field3" parent="Field_Points" instance=ExtResource("2_vld80")]
+position = Vector2(227, -231)
+
+[node name="Field4" parent="Field_Points" instance=ExtResource("2_vld80")]
+position = Vector2(-284, 7)
+
+[node name="Field5" parent="Field_Points" instance=ExtResource("2_vld80")]
+position = Vector2(-2, 7)
+
+[node name="Field6" parent="Field_Points" instance=ExtResource("2_vld80")]
+position = Vector2(258, 7)
+
+[node name="Field7" parent="Field_Points" instance=ExtResource("2_vld80")]
+position = Vector2(-291, 256)
+
+[node name="Field8" parent="Field_Points" instance=ExtResource("2_vld80")]
+position = Vector2(-8, 259)
+
+[node name="Field9" parent="Field_Points" instance=ExtResource("2_vld80")]
+position = Vector2(255, 269)
