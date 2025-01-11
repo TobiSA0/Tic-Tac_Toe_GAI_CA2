@@ -25,7 +25,8 @@ func add_play_algoritem_to_player(play_algo):
 		self.add_child(play_algorithem)
 		
 	elif play_algo == 1:
-		print("min_max")
+		play_algorithem = Min_Miax.new(game_manger.play_field,game_manger,self.get_name())
+		self.add_child(play_algorithem)
 		
 	elif play_algo == 2:
 		print("MCTS")

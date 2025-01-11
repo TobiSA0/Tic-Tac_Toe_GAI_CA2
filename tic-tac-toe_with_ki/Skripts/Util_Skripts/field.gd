@@ -13,7 +13,7 @@ func set_contet(player:String):
 	elif player == "Player2":
 		content = "X"
 	else:
-		printerr("Kein Spieler")
+		content = ""
 
 # hier könnte man dan auch noch theoretisch die Farbe setzten 
 func set_label(value:String):
