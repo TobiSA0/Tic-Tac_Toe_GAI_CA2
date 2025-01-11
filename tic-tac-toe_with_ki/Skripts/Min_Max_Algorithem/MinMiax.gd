@@ -2,70 +2,130 @@ extends Controler
 class_name Min_Miax
 
 
-#ängt davon ab wer gerade als erstes startet 
+## zu dem hier das ist der min max in der basis - könnte sich noch überlegen, alpha bruning hinzuzufügen 
+## aber mal schauen 
 
+var timer:Timer
+var field_scores = {}
+
+var timer_is_done = false
+var time_to_wait = 8
+
+var is_in_progress:bool = false
+
+
+var best_field = null
+
+
+func _ready() -> void:
+	timer = Timer.new()
+	timer.connect("timeout",Callable(self,"_on_timer_timeout"))
+	get_parent().add_child(timer)
+	
+
+func _on_timer_timeout():
+	timer_is_done = true
+	
+func start_timer():
+	timer.wait_time = time_to_wait
+	timer.start()
+	
+	
+	
 func make_move():
+	
+	is_in_progress = true
+	
 	var best_score = INF
 	var best_move = null
 	
+	
 	for field in playfield.get_list_of_fields():
-		if field is Field:
-			
-			if field.get_content() == "":
-				field.set_contet(player_name)
+	
+		if field.get_content() == "":
+			field.set_contet(player_name)
+			var score = minmax(playfield.get_list_of_fields(),0,true)	
+			field.set_contet("")
+			#print(score)
+			field_scores[field] = score
 				
-				var score = minmax(playfield.get_list_of_fields(),0,true)
-				
-				field.set_contet("")
-				
-				if score < best_score:
-					best_score = score
-					best_move = field
-				
+			if score < best_score:
+				best_score = score
+				best_move = field
+
+	#visualize_algorithm()
+
 	if best_move != null:
 		return best_move
-				
+	
+# probelm hier ist einfach das er aus der rekursion nie raus geht weil er immer  durch die update methdoe von _process läuft idk why 
 func minmax(board,depth, is_maximizing):
 	var result = check_winner()
-	
 	if result != null:
-		
 		if result == player_name:
 			return depth - 10
-		elif result != player_name && result != "":
+		elif result != player_name && result != "draw":
 			return 10 - depth
 		else:
-			return 0
-		
+			return 0    
+
 	# geht nur rein wen er spiler 1 zb human ist 	
 	if is_maximizing:
+		
 		var best_score = -INF
 		for field in playfield.get_list_of_fields():
 			if field is Field:
+		
 				if field.get_content() == "":
 					field.set_contet("Player1")
 					var score = minmax(playfield.get_list_of_fields(),depth+1,false)
+					
 					field.set_contet("")
 					best_score = max(best_score,score)
-	
+					
 		return best_score
-	
+		
 	else:
+		
 		var best_score = INF
 		for field in playfield.get_list_of_fields():
 			if field is Field:
+			
 				if field.get_content() == "":
 					field.set_contet("Player2")
 					var score = minmax(playfield.get_list_of_fields(),depth +1,true)
+				
 					field.set_contet("")
 					best_score = min(best_score,score)
-	
+					
 		return best_score
 		
 func action():
-	return make_move()					
+	
+	if not is_in_progress:
+		best_field = make_move()
+		
+	
+	elif best_field != null:
+		var temp = best_field
+		is_in_progress = false
+		best_field = null
+		return make_move()	
+		
+						
 					
-					
+func visualize_algorithm():
+	var total_score = 0
+	print(field_scores.keys())
 
-## ich muss no0ch alle scores spechern - dann in whaschelichkeit umrechnen , wenn das gehahn ist , pausire ich die _process methdoe und lasse alles anzeigen 		
-			
+	for score in field_scores.values():
+		total_score += abs(score) # absolute werte 
+		#print(total_score)
+	#for field in field_scores.keys():
+		#if field is Field:
+			#var probability = abs(field_scores[field])/total_score
+			##print(probability)
+			#field.set_label(str(probability))
+			#field.show_label()
+		
+	
