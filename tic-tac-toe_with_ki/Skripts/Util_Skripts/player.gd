@@ -21,7 +21,7 @@ func spawn_element(field:Field,element:PackedScene):
 func add_play_algoritem_to_player(play_algo):
 	if play_algo == 0:
 		print("Humen")
-		play_algorithem = Human_Controler.new(game_manger.play_field) 
+		play_algorithem = Human_Controler.new(game_manger.play_field,game_manger,self.get_name()) 
 		self.add_child(play_algorithem)
 		
 	elif play_algo == 1:
