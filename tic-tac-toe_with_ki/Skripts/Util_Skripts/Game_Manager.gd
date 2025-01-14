@@ -86,14 +86,14 @@ func _physics_process(delta: float) -> void:
 				player2.turn()	
 				
 		else:
-			
-			if not check_draw():
+			if game_is_won():
+				game_hud.set_ingame_text(winner_of_round+" is the Winner")
+			elif not check_draw():
 				game_hud.set_ingame_text("Nobody is the Winner")
 			else:
-				game_hud.set_ingame_text(winner_of_round+" is the Winner")
+				game_hud.set_ingame_text("Draw!")
 				
 			game_is_reset = false
 			game_is_done = true
 			game_is_set_up = false
-			
 			

@@ -34,11 +34,8 @@ func start_timer():
 	
 func make_move():
 	
-	is_in_progress = true
-	
 	var best_score = INF
 	var best_move = null
-	
 	
 	for field in playfield.get_list_of_fields():
 	
@@ -101,17 +98,24 @@ func minmax(board,depth, is_maximizing):
 		return best_score
 		
 func action():
-	
+	#print("Action called: is_in_progress =", is_in_progress, ", best_field =", best_field)
 	if not is_in_progress:
+		is_in_progress = true
 		best_field = make_move()
-		
+		return best_field
 	
+	else: 
+		is_in_progress = false
+		
+	"""
+	old code, logic not clear
 	elif best_field != null:
+		print("BEST FIELD")
 		var temp = best_field
 		is_in_progress = false
 		best_field = null
-		return make_move()	
-		
+		return temp
+	"""
 						
 					
 func visualize_algorithm():
