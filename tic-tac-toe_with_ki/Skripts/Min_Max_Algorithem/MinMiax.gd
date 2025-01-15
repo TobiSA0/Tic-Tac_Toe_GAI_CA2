@@ -41,19 +41,21 @@ func make_move():
 	
 		if field.get_content() == "":
 			field.set_contet(player_name)
-			var score = minmax(playfield.get_list_of_fields(),0,true)	
+			var score = minmax(playfield.get_list_of_fields(),0,true)
 			field.set_contet("")
 			#print(score)
 			field_scores[field] = score
-				
+
 			if score < best_score:
 				best_score = score
 				best_move = field
 
-	#visualize_algorithm()
-
 	if best_move != null:
+		visualize_algorithm()
 		return best_move
+	else: 
+		# no valid move found
+		return null
 	
 # probelm hier ist einfach das er aus der rekursion nie raus geht weil er immer  durch die update methdoe von _process läuft idk why 
 func minmax(board,depth, is_maximizing):
@@ -68,30 +70,26 @@ func minmax(board,depth, is_maximizing):
 
 	# geht nur rein wen er spiler 1 zb human ist 	
 	if is_maximizing:
-		
 		var best_score = -INF
-		for field in playfield.get_list_of_fields():
-			if field is Field:
-		
-				if field.get_content() == "":
-					field.set_contet("Player1")
-					var score = minmax(playfield.get_list_of_fields(),depth+1,false)
-					
-					field.set_contet("")
-					best_score = max(best_score,score)
+		for field in board:
+			if field is Field and field.get_content() == "":
+
+				field.set_contet("Player1")
+				var score = minmax(board, depth+1, false)
+				field.set_contet("")
+				best_score = max(best_score,score)
 					
 		return best_score
 		
 	else:
 		
 		var best_score = INF
-		for field in playfield.get_list_of_fields():
-			if field is Field:
-			
+		for field in board:
+			if field is Field and field.get_content() == "":
+
 				if field.get_content() == "":
 					field.set_contet("Player2")
-					var score = minmax(playfield.get_list_of_fields(),depth +1,true)
-				
+					var score = minmax(board, depth+1, true)
 					field.set_contet("")
 					best_score = min(best_score,score)
 					
@@ -120,16 +118,18 @@ func action():
 					
 func visualize_algorithm():
 	var total_score = 0
-	print(field_scores.keys())
+	#print(field_scores.keys())
 
 	for score in field_scores.values():
 		total_score += abs(score) # absolute werte 
-		#print(total_score)
-	#for field in field_scores.keys():
-		#if field is Field:
-			#var probability = abs(field_scores[field])/total_score
-			##print(probability)
-			#field.set_label(str(probability))
-			#field.show_label()
+		#print("Total score ", total_score)
+	for field in field_scores.keys():
+		if field is Field:
+			#print("Field Score: ", field_scores[field])
+			var probability = float(field_scores[field])/total_score * 100
+			var rounded_probability = round(probability * 100) / 100.0
+			#print("Probability: ",probability)
+			field.set_label(str(rounded_probability))
+			field.show_label()
 		
 	

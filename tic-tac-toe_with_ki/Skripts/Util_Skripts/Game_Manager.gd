@@ -45,7 +45,7 @@ func setup_game():
 	player1.add_play_algoritem_to_player(selection[0]) 
 	player2.add_play_algoritem_to_player(selection[1])
 	
-	game_is_set_up = true	
+	game_is_set_up = true
 
 ## schaut ob eine runde gewonnen ist indem es alle möglichen win kombinationen durch geht 
 func game_is_won():
@@ -83,7 +83,7 @@ func _physics_process(delta: float) -> void:
 			if turn_counter % 2 != 0:
 				player1.turn()
 			else:
-				player2.turn()	
+				player2.turn()
 				
 		else:
 			if game_is_won():
