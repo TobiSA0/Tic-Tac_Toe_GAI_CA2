@@ -14,24 +14,21 @@ var selected_field:Field
 		
 func _ready() -> void:
 	pass
-	
-	
-	
+
 # elemnte sind hier X oder O
 func spawn_element(field:Field,element:PackedScene):
 	var instance = element.instantiate()
-	field.add_child(instance)
+	if len(field.get_children())<2:
+		field.add_child(instance)
 
-
-		
 func add_play_algoritem_to_player(play_algo):
 	if play_algo == 0:
-		print("Humen")
-		play_algorithem = Human_Controler.new(game_manger.play_field,game_manger,self.get_name()) 
+		print("Human")
+		play_algorithem = Human_Controler.new(game_manger.play_field, game_manger, self.get_name()) 
 		self.add_child(play_algorithem)
 		
 	elif play_algo == 1:
-		play_algorithem = Min_Miax.new(game_manger.play_field,game_manger,self.get_name())
+		play_algorithem = Min_Miax.new(game_manger.play_field, game_manger, self.get_name())
 		self.add_child(play_algorithem)
 		
 	elif play_algo == 2:
@@ -39,7 +36,6 @@ func add_play_algoritem_to_player(play_algo):
 		
 	else:
 		printerr("fehler")	
-
 
 # funktion die später vl noch wichtig ist wenn man runden übergreifent arbeiten will 		
 func remove_controler():
