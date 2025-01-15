@@ -32,7 +32,8 @@ func add_play_algoritem_to_player(play_algo):
 		self.add_child(play_algorithem)
 		
 	elif play_algo == 2:
-		print("MCTS") # geliches verfahren wie oben 
+		play_algorithem = MCTS.new(game_manger.play_field,game_manger,self.get_name())
+		self.add_child(play_algorithem)
 		
 	else:
 		printerr("fehler")	
