@@ -13,10 +13,7 @@ var time_to_wait = 8
 
 var is_in_progress:bool = false
 
-
-
 var best_field = null
-
 
 func _ready() -> void:
 	timer = Timer.new()
@@ -30,14 +27,13 @@ func _on_timer_timeout():
 func start_timer():
 	timer.wait_time = time_to_wait
 	timer.start()
-	
-	
-	
+
+
 func make_move():
 	var is_maximising:bool = (player_name == "Player1")
 	var best_score = INF
 	var best_move = null
-	
+
 	#var is_maximising:bool = (player_name == "Player1")
 	print(is_maximising)
 	if is_maximising:
@@ -65,7 +61,7 @@ func make_move():
 				
 			elif is_maximising == false and score < best_score:
 				best_score = score
-				best_move = field 
+				best_move = field
 
 	if best_move != null:
 		visualize_algorithm()
@@ -127,45 +123,28 @@ func minmax(board,depth, is_maximizing):
 func action():
 	#print("Action called: is_in_progress =", is_in_progress, ", best_field =", best_field)
 	if not is_in_progress:
-		print("HI")
 		is_in_progress = true
 		best_field = make_move()
 		
-		
-	
 	if timer_is_done:
 		is_in_progress = false
 		timer_is_done = false
-		
 		playfield.hide_visualization()
 		field_scores = {}
 		
 		return best_field
-	
-	
-		
-	"""
-	old code, logic not clear
-	elif best_field != null:
-		print("BEST FIELD")
-		var temp = best_field
-		is_in_progress = false
-		best_field = null
-		return temp
-	"""
-						
-					
+
 func visualize_algorithm():
 	var total_score = 0
-	#print(field_scores.keys())
+	# print(field_scores.keys())
 
 	for score in field_scores.values():
 		total_score += abs(score) # absolute werte 
-		#print("Total score ", total_score)
+		# print("Total score ", total_score)
 	for field in field_scores.keys():
 		if field is Field:
-			#print("Field Score: ", field_scores[field])
-			var probability = float(field_scores[field])/total_score * 100
+			# print("Field Score: ", field_scores[field])
+			var probability = float(field_scores[field])/total_score * 100 if total_score != 0 else 0
 			var rounded_probability = round(probability * 100) / 100.0
 			print("Probability: ",probability)
 			field.set_label(str(rounded_probability))
