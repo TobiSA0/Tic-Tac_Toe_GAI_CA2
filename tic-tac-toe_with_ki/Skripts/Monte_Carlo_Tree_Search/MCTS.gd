@@ -5,6 +5,24 @@ const ITERATIONS: int = 1000
 @onready var enemy: String = "Player1" if player_name == "Player2" else "Player2"
 var root: TreeNode
 
+var timer_is_done = false
+var timer_active = false
+var time_to_wait = 8
+var timer:Timer
+
+func _ready() -> void:
+	timer = Timer.new()
+	timer.connect("timeout",Callable(self,"_on_timer_timeout"))
+	get_parent().add_child(timer)
+
+func _on_timer_timeout():
+	print("hi")
+	timer_is_done = true
+	
+func start_timer():
+	timer.wait_time = time_to_wait
+	timer.start()
+
 # tree node class definition
 class TreeNode:
 	var board: Array[String]
@@ -33,12 +51,22 @@ class TreeNode:
 
 # determine which move is the best
 func action():
-	# 
+
 	var initial_board: Array[String] = []
 	for field in playfield.get_list_of_fields():
 		initial_board.append(field.get_content())
-	var best_move: int = self.search(initial_board)
-	return playfield.get_list_of_fields()[best_move]
+		
+	if not timer_active:
+		print("lol ")	
+		visualize_algorithm(initial_board)
+	
+	if timer_is_done:
+		playfield.hide_visualization()
+		var best_move: int = self.search(initial_board)
+		timer_is_done = false
+		timer_active = false
+		timer.stop()
+		return playfield.get_list_of_fields()[best_move]
 
 #ALGORITHM
 func search(initial_board: Array[String]) -> int:
@@ -221,6 +249,7 @@ func get_best_move(node: TreeNode, exploration_constant: int) -> TreeNode:
 	
 	# return one of the best move randomly
 	var random_index = randi() % best_moves.size()
+	
 	return best_moves[random_index]
 
 # get all possible moves for a board
@@ -261,6 +290,7 @@ func check_simulation_terminal(simulation_board) -> bool:
 
 # check if there is a winner in a board simulation
 func check_simulation_winner(simulation_board) -> String:
+	
 	var win_combinations = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [2, 4, 6], [0, 4, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8]]
 	for combination in win_combinations:
 		var values: Array[String] = []
@@ -271,3 +301,56 @@ func check_simulation_winner(simulation_board) -> String:
 			return "Player1" if values[0] == "O" else "Player2"
 	# no winner
 	return "No Winner"
+	
+	
+	
+func calculate_win_probabilities(initial_board: Array[String]) -> Dictionary:
+	# Dictionary to store win probabilities
+	var win_probabilities: Dictionary = {}
+	var copied_board = initial_board.duplicate(true)
+	self.root = TreeNode.new(copied_board, null)
+	
+	# Perform MCTS simulations
+	for iteration in range(ITERATIONS):
+		var node = self.select(self.root)
+		var score = self.rollout(node.board)
+		self.backpropagate(node, score)
+
+	# Calculate probabilities for each move
+	for move in _get_possible_moves(initial_board):
+		# Check if move has a corresponding child node
+		for child in self.root.children:
+			if child.board[move] != initial_board[move]:
+				# Calculate win probability as visits or score divided by root visits
+				var probability = child.score / child.visits if child.visits > 0 else 0.0
+				win_probabilities[move] = round(probability * 100)
+				break
+			else:
+				win_probabilities[move] = 0.0  # No valid data, assume 0 probability
+
+	return win_probabilities
+
+
+
+func visualize_algorithm(board):
+	var probabilities = self.calculate_win_probabilities(board)
+	var field_board = playfield.get_list_of_fields()
+	
+	for i in probabilities.keys():
+		if field_board[i] is Field:
+			field_board[i].set_label(str(probabilities[i]))
+			field_board[i].show_label()
+			
+	if not timer_active:
+		timer_active = true
+		start_timer()
+		
+		
+		
+		
+		
+			
+			
+			
+	
+	

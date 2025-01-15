@@ -19,9 +19,6 @@ func action():
 	return 
 	
 # hier kann man dan die visualisierungs logik jedes algoritmuses rein scheiben 
-func visualize_algorithm():
-	pass
-	
 # schaut einfach ob es ein gewinner gibt oder unenscheiden ist ,  hatte ich für MinMAx gebarucht vl kann man es auch für MCTS benutzen 
 func check_winner():
 	var field = playfield.get_list_of_fields()
