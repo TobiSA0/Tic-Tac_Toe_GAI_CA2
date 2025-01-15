@@ -22,6 +22,7 @@ func _ready() -> void:
 	
 
 func _on_timer_timeout():
+	timer.stop()
 	timer_is_done = true
 	
 func start_timer():
@@ -150,4 +151,3 @@ func visualize_algorithm():
 			field.set_label(str(rounded_probability))
 			field.show_label()
 		
-	

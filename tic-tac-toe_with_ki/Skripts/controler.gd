@@ -17,7 +17,7 @@ func _init(play_field:Play_Field,gamemanger:Game_Manger, playername:String ) -> 
 # sie sollte immer ein " feld " als zuückgarbe an dei turn methdoe vom spiler geben 
 func action():
 	return 
-	
+
 # schaut einfach ob es ein gewinner gibt oder unenscheiden ist ,  hatte ich für MinMAx gebarucht vl kann man es auch für MCTS benutzen 
 func check_winner():
 	var field = playfield.get_list_of_fields()
