@@ -1,14 +1,16 @@
 extends Controler
 class_name MCTS
 
-const ITERATIONS: int = 1000
-@onready var enemy: String = "Player1" if player_name == "Player2" else "Player2"
-var root: TreeNode
+const ITERATIONS: int = 100
+const TIME_TO_WAIT: int = 1
+const TREE_GRAPH_NODE = preload("res://Scenes/tree_graph_node.tscn")
 
-var timer_is_done = false
-var timer_active = false
-var time_to_wait = 8
-var timer:Timer
+@onready var enemy_name: String = "Player1" if player_name == "Player2" else "Player2"
+var root: TreeNode
+var timer_is_done: bool = false
+var timer_active: bool = false
+var timer: Timer
+@onready var mcts_graph: MctsGraph = $"../../MCTSGraphWindow/MCTSGraph"
 
 func _ready() -> void:
 	timer = Timer.new()
@@ -20,59 +22,25 @@ func _on_timer_timeout():
 	timer_is_done = true
 	
 func start_timer():
-	timer.wait_time = time_to_wait
+	timer.wait_time = TIME_TO_WAIT
 	timer.start()
-
-# tree node class definition
-class TreeNode:
-	var board: Array[String]
-	var children: Array[TreeNode]
-	#var current_player: String
-	var is_fully_expanded: bool
-	var is_terminal: bool
-	var parent: TreeNode
-	var possible_moves: Array[int]
-	var expanded_moves: Array[int]
-	var score: float
-	var visits: float
-
-	# constructor
-	func _init(board: Array[String], parent: TreeNode = null):
-		self.board = board.duplicate(true)
-		self.children = []
-		#self.current_player = "Player1" if self.parent.current_player == "Player2" else "Player2"
-		self.is_fully_expanded = false
-		self.is_terminal = false
-		self.parent = parent
-		self.possible_moves = []
-		self.expanded_moves = []
-		self.score = 0.0
-		self.visits = 0.0
 
 # determine which move is the best
 func action():
-
 	var initial_board: Array[String] = []
 	for field in playfield.get_list_of_fields():
 		initial_board.append(field.get_content())
-		
-	if not timer_active:
-		print("lol ")	
-		visualize_algorithm(initial_board)
-	
-	if timer_is_done:
-		playfield.hide_visualization()
-		var best_move: int = self.search(initial_board)
-		timer_is_done = false
-		timer_active = false
-		timer.stop()
-		return playfield.get_list_of_fields()[best_move]
 
-#ALGORITHM
+	var best_move: int = self.search(initial_board)
+	mcts_graph.align_nodes()
+	return playfield.get_list_of_fields()[best_move]
+
+# MCTS algorithm: create various TreeNodes with different play turns and search for the turn with the best win probability 
 func search(initial_board: Array[String]) -> int:
-	# create root node
-	var copied_board = initial_board.duplicate(true)
-	self.root = TreeNode.new(copied_board, null)
+	# create root node based on current board state
+	var board_copy = initial_board.duplicate(true)
+	self.root = TreeNode.new(board_copy, null, 0)
+	mcts_graph.add_graph_node(self.root)
 	# walk through x iterations
 	for iteration in range(ITERATIONS):
 		# select a node (selection)
@@ -87,11 +55,14 @@ func search(initial_board: Array[String]) -> int:
 	# pick the best move in the current board
 	var best_node: TreeNode = self.get_best_move(self.root, 0)
 	var best_board: Array[String] = best_node.board
-	for index in range(len(best_board)):
-		if best_board[index] != copied_board[index]:
-			return index
-	# should not reach this
-	return 9
+	var index: int = -1
+	for i in range(len(best_board)):
+		if best_board[i] != board_copy[i]:
+			index = i
+			break
+	if index == -1:
+		push_error("Ein fehlerhafter Zug wurde berechnet!")
+	return index
 
 # select most promising node
 func select(node: TreeNode) -> TreeNode:
@@ -128,7 +99,9 @@ func expand(node: TreeNode) -> TreeNode:
 			#print("2: ", current_board)
 			#print("3: ", new_board)
 			# create a new child
-			var child_node = TreeNode.new(new_board, node)
+			var a = node.layer
+			var child_node = TreeNode.new(new_board, node, node.layer + 1)
+			mcts_graph.add_graph_node(child_node)
 			# add child node to parent node
 			node.children.append(child_node)
 			# check if child node is terminal
@@ -159,7 +132,7 @@ func backpropagate(node: TreeNode, score: float) -> void:
 		# set node to parent
 		node = node.parent
 
-# simulate the game with random moves until board is filled (end of game)
+# simulate the game with random moves until end of game is reached
 func rollout(board: Array[String]) -> int:
 	#var current_player: String = self.player_name
 	var board_simulation: Array[String] = board.duplicate(true)
@@ -174,7 +147,7 @@ func rollout(board: Array[String]) -> int:
 	var winner_name = check_simulation_winner(board_simulation)
 	if winner_name == player_name: # player wins simulation
 		return 1
-	elif winner_name == enemy: # enemy wins simulation
+	elif winner_name == enemy_name: # enemy wins simulation
 		return -1
 	else: # draw simulation
 		return 0
@@ -232,12 +205,8 @@ func get_best_move(node: TreeNode, exploration_constant: int) -> TreeNode:
 		# define current player
 		var current_player = 1 if player_name == "Player1" else -1
 		# get move score using UCT formula
-		var move_score = current_player * child_node.score / child_node.visits + exploration_constant * sqrt(log(node.visits / child_node.visits))
-		if exploration_constant == 0:
-			move_score = child_node.score
-		#if move_score.is_nan():
-			#continue
-			
+		var move_score = 1 * child_node.score / child_node.visits + exploration_constant * sqrt(log(node.visits) / child_node.visits)
+		
 		# better move is found
 		if move_score > best_score:
 			best_score = move_score
@@ -247,9 +216,8 @@ func get_best_move(node: TreeNode, exploration_constant: int) -> TreeNode:
 		elif move_score == best_score:
 			best_moves.append(child_node)
 	
-	# return one of the best move randomly
+	# return one of the best moves randomly
 	var random_index = randi() % best_moves.size()
-	
 	return best_moves[random_index]
 
 # get all possible moves for a board
@@ -265,13 +233,6 @@ func simulate_move(board: Array[String], move: int, symbol: String) -> Array[Str
 	#var copy = board.duplicate(true)
 	board[move] = symbol
 	return board
-
-# check if game is terminal for a given board
-func check_terminal(board: Array[String]) -> bool:
-	for field in board:
-		if field == "":
-			return false
-	return true
 
 # check if there is a terminal state in a board simulation
 func check_simulation_terminal(simulation_board) -> bool:
@@ -290,7 +251,6 @@ func check_simulation_terminal(simulation_board) -> bool:
 
 # check if there is a winner in a board simulation
 func check_simulation_winner(simulation_board) -> String:
-	
 	var win_combinations = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [2, 4, 6], [0, 4, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8]]
 	for combination in win_combinations:
 		var values: Array[String] = []
@@ -301,56 +261,3 @@ func check_simulation_winner(simulation_board) -> String:
 			return "Player1" if values[0] == "O" else "Player2"
 	# no winner
 	return "No Winner"
-	
-	
-	
-func calculate_win_probabilities(initial_board: Array[String]) -> Dictionary:
-	# Dictionary to store win probabilities
-	var win_probabilities: Dictionary = {}
-	var copied_board = initial_board.duplicate(true)
-	self.root = TreeNode.new(copied_board, null)
-	
-	# Perform MCTS simulations
-	for iteration in range(ITERATIONS):
-		var node = self.select(self.root)
-		var score = self.rollout(node.board)
-		self.backpropagate(node, score)
-
-	# Calculate probabilities for each move
-	for move in _get_possible_moves(initial_board):
-		# Check if move has a corresponding child node
-		for child in self.root.children:
-			if child.board[move] != initial_board[move]:
-				# Calculate win probability as visits or score divided by root visits
-				var probability = child.score / child.visits if child.visits > 0 else 0.0
-				win_probabilities[move] = round(probability * 100)
-				break
-			else:
-				win_probabilities[move] = 0.0  # No valid data, assume 0 probability
-
-	return win_probabilities
-
-
-
-func visualize_algorithm(board):
-	var probabilities = self.calculate_win_probabilities(board)
-	var field_board = playfield.get_list_of_fields()
-	
-	for i in probabilities.keys():
-		if field_board[i] is Field:
-			field_board[i].set_label(str(probabilities[i]))
-			field_board[i].show_label()
-			
-	if not timer_active:
-		timer_active = true
-		start_timer()
-		
-		
-		
-		
-		
-			
-			
-			
-	
-	
