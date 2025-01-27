@@ -47,7 +47,7 @@ func remove_controler():
 # welchem spiler weis welcches elemnt sie auf dem brett anzeigen soll 	
 func turn():
 	if selected_field == null:
-		selected_field = play_algorithem.action()
+		selected_field = await play_algorithem.action()
 	else:
 		if self.get_name()=="Player1":
 			spawn_element(selected_field,O)
@@ -56,7 +56,7 @@ func turn():
 		else:
 			printerr("kein Spieler")
 			
-		selected_field.set_contet(self.get_name()) # sin der Feld Klassse 
+		selected_field.set_content(self.get_name()) # sin der Feld Klassse 
 		game_manger.turn_counter += 1 # runden counter +1
 		
 		selected_field = null # zurücksetzen des feldes 
