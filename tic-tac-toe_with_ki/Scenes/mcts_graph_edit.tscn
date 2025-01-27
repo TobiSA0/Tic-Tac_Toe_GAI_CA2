@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c818ruc7jdqkt"]
 
-[ext_resource type="Script" path="res://Skripts/Monte_Carlo_Tree_Search/mcts_graph.gd" id="1_e6wm6"]
+[ext_resource type="Script" path="res://Skripts/Monte_Carlo_Tree_Search/mcts_graph_edit.gd" id="1_e6wm6"]
 
 [node name="MCTSGraphWindow" type="Window"]
 initial_position = 2
