@@ -18,6 +18,7 @@ var best_score = 0
 var total_score = 0
 var steps_queue = []  # Warteschlange für die Schritte (Felder und Aktionen)
 var is_maximizing: bool = false
+var hud:HUD
 
 signal visualization_finished
 
@@ -25,6 +26,7 @@ func _ready() -> void:
 	timer = Timer.new()
 	timer.connect("timeout",Callable(self,"_on_timer_timeout"))
 	get_parent().add_child(timer)
+	hud = game_manager.game_hud
 	is_maximizing = (player_name == "Player1")
 	
 
@@ -38,12 +40,19 @@ func start_timer():
 
 func make_move():
 	# Maximierung oder Minimierung basierend auf dem Spieler
+	
+	if is_maximizing:
+		hud.set_ingame_text("Hey i will choose the Biggest Score")	
+	else:
+		hud.set_ingame_text("Hey i will choose the Smalest Score")
+		
+		
+	
+		
 	best_score = - INF if is_maximizing else INF  # Initialisiere besten Score
 	var best_move = null
-
-	# Warteschlange für Visualisierungsschritte leeren
+	# arteschlange für Visualisierungsschritte leeren
 	steps_queue.clear()
-
 	# Iteriere über alle Felder
 	for field in playfield.get_list_of_fields():
 		if field.get_content() == "":  # Nur leere Felder prüfen
@@ -69,9 +78,11 @@ func make_move():
 
 			# Schritte zur Visualisierung hinzufügen
 			steps_queue.append({"field": field, "action": "highlight"})
-			field.set_score(get_probability_for_field(field))
+			#field.set_score(get_probability_for_field(field))
 			steps_queue.append({"field": field, "action": "reset"})
-
+			
+	
+	hud.show_ingame_text()
 	# Starte die Visualisierung
 	if best_move != null:
 		best_field = best_move
@@ -91,14 +102,14 @@ func minmax(board, depth, is_maximizing) -> int:
 	if result != null:
 		if is_maximizing:
 			if result == player_name:
-				return 10 - depth
+				return depth
 			elif result != "draw":
 				return depth - 10
 			else:
 				return 0
 		else:
 			if result == player_name:
-				return depth - 10
+				return depth - 5
 			elif result != "draw":
 				return 10 - depth
 			else:
@@ -132,23 +143,32 @@ func action():
 	#print("Action called: is_in_progress =", is_in_progress, ", best_field =", best_field)
 	if not is_in_progress:
 		is_in_progress = true
-		#playfield.show_visualization()
-		best_field = await make_move()
+		
+		if is_maximizing && game_manager.turn_counter == 1:
+			var random_field = randi()%9+1
+			var playfield = playfield.get_list_of_fields()
+			is_in_progress = false
+			return playfield[random_field]
+			
+		else:
+			
+			print("hello")
+			best_field = await make_move()
 		
 	if timer_is_done:
 		is_in_progress = false
 		timer_is_done = false
 		playfield.hide_visualization()
 		field_scores = {}
-		
+		hud.hide_ingame_test()
 		return best_field
 
-func calc_total_fields_score():
+func calc_total_fields_score():  # brauchen wir nicht mehr 
 	total_score = 0
 	for score in field_scores.values():
 		total_score += abs(score)
 
-func get_probability_for_field(field: Field):
+func get_probability_for_field(field: Field): # brauchen wir nicht mehr 
 	calc_total_fields_score()
 	# print("Field Score: ", field_scores[field])
 	var probability = float(field_scores[field])/total_score * 100 if total_score != 0 else 0
@@ -162,9 +182,10 @@ func process_visualization():
 		var action = step["action"]
 		var score = field.get_score()
 		if score == 0:
-			field.set_label(str(score))
+			field.set_label("DRAW")
 		else:
-			field.set_label(str(score)) if is_maximizing else field.set_label(str(-score)) # show negative score when player is not maximizing because then lower score is better
+			field.set_label(str(score))
+		 
 		field.show_label()
 		if action == "highlight":
 			if field == best_field:

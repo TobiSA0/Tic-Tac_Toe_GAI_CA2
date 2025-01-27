@@ -33,7 +33,7 @@ func set_highlighted(highlight: bool, color: Color = Color(1, 0, 0)) -> void:
 		self.get_child(0).modulate = Color(1, 1, 1) # Zurücksetzen auf Standardfarbe
 
 func set_label(value:String):
-	label.text = value + "%"
+	label.text = value 
 	
 func get_label_text():
 	return label.text
