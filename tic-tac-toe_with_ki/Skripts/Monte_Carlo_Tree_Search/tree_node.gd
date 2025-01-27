@@ -1,6 +1,8 @@
 class_name TreeNode
 extends GraphNode
 
+const DEBUG: bool = true
+
 @onready var board_label: GridContainer
 @onready var layer_label: Label
 @onready var score_label: Label
@@ -21,7 +23,7 @@ var layer: int:
 	set(value):
 		layer = value
 		layer_label.text = "Layer: " + str(value)
-var mcts_graph: MctsGraphEdit
+var mcts_graph_edit: MctsGraphEdit
 var move_index: int
 var parent: TreeNode
 var possible_moves: Array[int]
@@ -45,7 +47,7 @@ func _ready() -> void:
 	self.layer_label = $Layer
 	self.score_label = $Score
 	self.visits_label = $Visits
-	self.mcts_graph = self.get_parent()
+	self.mcts_graph_edit = self.get_parent()
 	#print("TreeGraphNode _ready")
 
 # constructor, runs when GraphEdit instantiates new TreeGraphNode scene
@@ -64,6 +66,14 @@ func add_values(board: Array[String], parent: TreeNode):
 		self.parent = parent
 		self.connect_to_parent()
 		self.move_index = self.get_move_index()
+	# debug
+	if DEBUG:
+		for child in mcts_graph_edit.children:
+			var a = child.board
+			var b = self.board
+			if child.board == self.board:
+				print("AHA")
+		mcts_graph_edit.children.append(self)
 
 # 
 func get_move_index() -> int:
@@ -82,11 +92,13 @@ func get_possible_moves() -> void:
 # connect graph node to parent graph node
 func connect_to_parent() -> void:
 	if self.parent:
-		print("Connecting to parent...")
+		if DEBUG:
+			print("Connecting to parent...")
 		# connect left side of parent to right side of self
-		self.mcts_graph.connect_node(self.parent.name, 0, self.name, 0)
+		self.mcts_graph_edit.connect_node(self.parent.name, 0, self.name, 0)
 	else:
-		print("No parent to connect to...")
+		if DEBUG:
+			print("No parent to connect to...")
 
 # position within the GraphEdit to make graph symmetrical
 func position_self(amount_nodes: int, row: int) -> void:

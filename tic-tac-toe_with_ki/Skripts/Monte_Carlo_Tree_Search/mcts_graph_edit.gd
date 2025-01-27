@@ -1,6 +1,7 @@
 class_name MctsGraphEdit
 extends GraphEdit
 
+const DEBUG: bool = true
 const TREE_NODE = preload("res://Scenes/tree_node.tscn")
 var layer_dictionary: Dictionary = {
 	0: 0,
@@ -22,7 +23,9 @@ func add_node(tree_node: TreeNode):
 		self.child_counter += 1
 		tree_node.title = str(self.child_counter)
 		children.append(tree_node)
-	print("counter: ", self.child_counter)
+	# debug
+	if DEBUG:
+		print("counter: ", self.child_counter)
 
 func align_nodes() -> void:
 	var row_dictionary: Dictionary = {
@@ -46,7 +49,9 @@ func align_nodes() -> void:
 
 # 
 func clear_nodes() -> void:
+	# reset child counter
 	self.child_counter = 0
+	# reset layer_dictionary
 	for item in layer_dictionary:
 		layer_dictionary[item] = 0
 	for child in self.get_children():

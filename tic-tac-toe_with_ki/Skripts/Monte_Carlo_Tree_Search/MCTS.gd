@@ -1,7 +1,8 @@
 extends Controler
 class_name MCTS
 
-const ITERATIONS: int = 100
+const DEBUG: bool = true
+const ITERATIONS: int = 300
 const TREE_NODE = preload("res://Scenes/tree_node.tscn")
 
 @onready var enemy_name: String = "Player1" if player_name == "Player2" else "Player2"
@@ -21,6 +22,18 @@ func action():
 	var best_move_index: int = self.search(copy_initial_board)
 	# align all nodes symmetrically in graph edit
 	mcts_graph_edit.align_nodes()
+	# debug
+	if DEBUG:
+		var index: int = 0
+		for child in mcts_graph_edit.children:
+			var counter: int = 0
+			var c_board = child.board
+			for i in range(len(mcts_graph_edit.children)):
+				if i != index:
+					if c_board == mcts_graph_edit.children[i].board:
+						print("duplicate for child ", index + 1, " found at index ",  i + 1)
+						print("c_board:         ", c_board, "\nduplicate board: " , mcts_graph_edit.children[i].board)
+			index += 1
 	# play move
 	return playfield.get_list_of_fields()[best_move_index]
 
@@ -41,12 +54,6 @@ func search(initial_board: Array[String]) -> int:
 	var index: int = -1
 	var best_node: TreeNode = self.get_best_move(tree_node, 0)
 	index = best_node.move_index
-	#var best_board: Array[String] = best_node.board
-	## compare inital board with board from best move to determine which index has to be played
-	#for i in range(len(best_board)):
-		#if best_board[i] != initial_board[i]:
-			#index = i
-			#break
 	if index == -1:
 		# shouldn't get here
 		push_error("Ein fehlerhafter Zug wurde berechnet!")
@@ -63,7 +70,6 @@ func select(node: TreeNode) -> TreeNode:
 		else:
 			# otherwise expand the node
 			return self.expand(node)
-	#print("BREAK")
 	return node
 
 # expand a node
@@ -82,8 +88,31 @@ func expand(node: TreeNode) -> TreeNode:
 			var copy_board = node.board.duplicate(true)
 			# create new board
 			var new_board: Array[String] = simulate_move(copy_board, move_index, symbol)
+			var tree_node: TreeNode
+			
+			
+			#----version 1----
+			# check if there is already a tree node with the exact same board layout (from other expanding)
+			#for child in mcts_graph_edit.children:
+				#if child.board == copy_board:
+					#print("duplicate board state found")
+					#tree_node = child
+					#break
+				#else:
+					## create a new child
+					#tree_node = TREE_NODE.instantiate()
+					#mcts_graph_edit.add_node(tree_node)
+					#tree_node.add_values(new_board, node)
+					## add child node to parent node
+					#node.children.append(tree_node)
+					## check if child node is terminal
+					#if check_simulation_terminal(tree_node.board):
+						#tree_node.is_terminal = true
+			#----version 1----
+			
+			#----version 2----
 			# create a new child
-			var tree_node: TreeNode = TREE_NODE.instantiate()
+			tree_node = TREE_NODE.instantiate()
 			mcts_graph_edit.add_node(tree_node)
 			tree_node.add_values(new_board, node)
 			# add child node to parent node
@@ -91,6 +120,9 @@ func expand(node: TreeNode) -> TreeNode:
 			# check if child node is terminal
 			if check_simulation_terminal(tree_node.board):
 				tree_node.is_terminal = true
+			#----version 2----
+			
+			
 			# check if parent node is fully expanded
 			if len(node.possible_moves) == 0:
 				node.is_fully_expanded = true
