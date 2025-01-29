@@ -117,6 +117,7 @@ func expand(node: TreeNode) -> TreeNode:
 			tree_node.add_values(new_board, node)
 			# add child node to parent node
 			node.children.append(tree_node)
+			node.add_child_node(tree_node)
 			# check if child node is terminal
 			if check_simulation_terminal(tree_node.board):
 				tree_node.is_terminal = true

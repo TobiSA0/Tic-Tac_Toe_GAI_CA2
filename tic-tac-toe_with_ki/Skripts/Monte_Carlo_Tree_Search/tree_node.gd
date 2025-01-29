@@ -7,6 +7,9 @@ const DEBUG: bool = true
 @onready var layer_label: Label
 @onready var score_label: Label
 @onready var visits_label: Label
+@onready var toggle_button: Button = $Button
+
+@export var is_expanded: bool = false
 
 # attributes
 var board: Array[String]:
@@ -48,6 +51,9 @@ func _ready() -> void:
 	self.score_label = $Score
 	self.visits_label = $Visits
 	self.mcts_graph_edit = self.get_parent()
+	
+	toggle_button.text = "+"
+	toggle_button.connect("pressed", _on_toggle_pressed)
 	#print("TreeGraphNode _ready")
 
 # constructor, runs when GraphEdit instantiates new TreeGraphNode scene
@@ -95,7 +101,7 @@ func connect_to_parent() -> void:
 		if DEBUG:
 			print("Connecting to parent...")
 		# connect left side of parent to right side of self
-		self.mcts_graph_edit.connect_node(self.parent.name, 0, self.name, 0)
+		#self.mcts_graph_edit.connect_node(self.parent.name, 0, self.name, 0)
 	else:
 		if DEBUG:
 			print("No parent to connect to...")
@@ -108,3 +114,28 @@ func position_self(amount_nodes: int, row: int) -> void:
 	var x: float = self.layer * (self.size.x * 6)
 	var y: float = upper_y + (row * (self.size.y * 2))
 	self.position_offset = Vector2(x, y)
+
+# aus und einklappen der nodes im graph
+func _on_toggle_pressed():
+	print("Toggle button pressed for", self.name)
+	is_expanded = !is_expanded
+	toggle_button.text = "-" if is_expanded else "+"
+
+	toggle_descendants(is_expanded)
+
+# recursiv durch die children gehen und togglen
+func toggle_descendants(visible: bool):
+	for child in children:
+		child.visible = visible
+		if visible:
+			mcts_graph_edit.connect_node(self.name, 0, child.name, 0)
+			child.toggle_descendants(false)
+		else: 
+			if mcts_graph_edit.is_node_connected(self.name, 0, child.name, 0):
+				mcts_graph_edit.disconnect_node(self.name, 0, child.name, 0)
+			child.toggle_descendants(false)  
+
+func add_child_node(child_node: TreeNode):
+	children.append(child_node)
+	add_child(child_node)
+	child_node.visible = false 

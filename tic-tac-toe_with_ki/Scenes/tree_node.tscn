@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://be0mnj26dxm2b"]
+[gd_scene load_steps=2 format=3 uid="uid://dn1ws36f1bt4m"]
 
 [ext_resource type="Script" path="res://Skripts/Monte_Carlo_Tree_Search/tree_node.gd" id="1_hn631"]
 
@@ -42,6 +42,15 @@ slot/3/right_type = 0
 slot/3/right_color = Color(1, 1, 1, 1)
 slot/3/right_icon = null
 slot/3/draw_stylebox = true
+slot/4/left_enabled = false
+slot/4/left_type = 0
+slot/4/left_color = Color(1, 1, 1, 1)
+slot/4/left_icon = null
+slot/4/right_enabled = false
+slot/4/right_type = 0
+slot/4/right_color = Color(1, 1, 1, 1)
+slot/4/right_icon = null
+slot/4/draw_stylebox = true
 script = ExtResource("1_hn631")
 
 [node name="Board" type="GridContainer" parent="."]
@@ -97,3 +106,7 @@ text = "Score: 0"
 [node name="Visits" type="Label" parent="."]
 layout_mode = 2
 text = "Visits: 0"
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 2
+text = "toggle"

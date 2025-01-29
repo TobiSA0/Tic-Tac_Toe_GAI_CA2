@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://c818ruc7jdqkt"]
+[gd_scene load_steps=2 format=3 uid="uid://bud6i3cax52rk"]
 
 [ext_resource type="Script" path="res://Skripts/Monte_Carlo_Tree_Search/mcts_graph_edit.gd" id="1_e6wm6"]
 
