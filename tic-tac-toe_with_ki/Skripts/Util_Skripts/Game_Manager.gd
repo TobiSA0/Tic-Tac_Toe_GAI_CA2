@@ -8,6 +8,7 @@ class_name Game_Manger
 @onready var game_hud:HUD = $UI_Layer/HUD # verweiß auf hud elemnte 
 @onready var player1:Player = $Player1 # spiler 1
 @onready var player2:Player = $Player2 # spieler 2
+@onready var mcts_graph_window: Window = $MCTSGraphWindow
 
 #flags hier kann man vl noch verbesserungen vornehemen aber es geht alos von da her 
 var game_is_done:bool = true
@@ -23,6 +24,7 @@ var turn_counter = 1
 func _ready() -> void:
 	game_hud.connect("button_pressed",Callable(self,"_on_button_pressed"))
 	game_hud.connect("reset_pressed",Callable(self,"_on_reset_pressed"))
+	game_hud.connect("graph_button_pressed",Callable(self,"_on_graph_button_pressed"))
 
 
 # wenn jeweiliger button gedrückt dann arbeite damit  und führe aus was drin steht 
@@ -35,7 +37,11 @@ func _on_button_pressed():
 func _on_reset_pressed():
 	if game_is_done && not game_is_reset:
 		get_tree().reload_current_scene()
-		
+
+# hide graph window on x press
+func _on_graph_button_pressed() -> void:
+	if not mcts_graph_window.visible:
+		mcts_graph_window.visible = true
 
 ## In dieser Methode werden  durch die Auwahl in den Option Button gewähltes elemnet gewählt  so weiß der spieler welchen Algo er
 ## verweden soll 	

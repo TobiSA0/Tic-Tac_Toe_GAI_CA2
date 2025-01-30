@@ -1,8 +1,10 @@
 class_name MctsGraphEdit
 extends GraphEdit
 
-const DEBUG: bool = true
-const TREE_NODE = preload("res://Scenes/tree_node.tscn")
+const DEBUG: bool = false
+
+var mcts: MCTS
+# dictionary to count children per layer
 var layer_dictionary: Dictionary = {
 	0: 0,
 	1: 0,
@@ -14,21 +16,8 @@ var layer_dictionary: Dictionary = {
 	7: 0,
 	8: 0,
 }
-var child_counter: int = 0
-var children: Array[TreeNode] = []
-
-func add_node(tree_node: TreeNode):
-	if tree_node:
-		self.add_child(tree_node)
-		self.child_counter += 1
-		tree_node.title = str(self.child_counter)
-		children.append(tree_node)
-	# debug
-	if DEBUG:
-		print("counter: ", self.child_counter)
-
-func align_nodes() -> void:
-	var row_dictionary: Dictionary = {
+# dictionary to count rows per layer
+var row_dictionary: Dictionary = {
 	0: 0,
 	1: 0,
 	2: 0,
@@ -38,22 +27,42 @@ func align_nodes() -> void:
 	6: 0,
 	7: 0,
 	8: 0,
-	}
-	for child in children:
-		if child is TreeNode:
-			layer_dictionary[child.layer] += 1
-	for child in children:
-		if child is TreeNode:
-			child.position_self(layer_dictionary[child.layer], row_dictionary[child.layer])
-			row_dictionary[child.layer] += 1
+}
+
+#
+func _ready() -> void:
+	self.get_parent().connect("close_requested", _on_window_close)
 
 # 
-func clear_nodes() -> void:
+func align_nodes() -> void:
+	#print("test: ", len(self.get_children()))
+	if self.mcts:
+		var root_layer: int = mcts.root.layer
+		# count children per layer
+		for child in self.get_children():
+			if child is TreeNode and child.parent:
+				self.layer_dictionary[child.layer] += 1
+		# position children and count the rows
+		for child in self.get_children():
+			if child is TreeNode and child.parent:
+				child.position_self(self.layer_dictionary[child.layer], self.row_dictionary[child.layer], root_layer)
+				self.row_dictionary[child.layer] += 1
+		for key in row_dictionary:
+			row_dictionary[key] = 0
+			layer_dictionary[key] = 0
+
+# 
+func reset_tree_nodes() -> void:
 	# reset child counter
 	self.child_counter = 0
-	# reset layer_dictionary
-	for item in layer_dictionary:
-		layer_dictionary[item] = 0
+	# destroy all TreeNodes
 	for child in self.get_children():
 		if child is TreeNode:
-			child.queue_free()
+			child.free()
+	# reset dictionaries and array
+	for key in layer_dictionary:
+		layer_dictionary[key] = 0
+
+#
+func _on_window_close() -> void:
+	self.get_parent().hide()

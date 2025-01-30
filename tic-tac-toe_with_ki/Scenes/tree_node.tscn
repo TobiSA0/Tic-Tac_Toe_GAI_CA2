@@ -3,8 +3,8 @@
 [ext_resource type="Script" path="res://Skripts/Monte_Carlo_Tree_Search/tree_node.gd" id="1_hn631"]
 
 [node name="TreeNode" type="GraphNode"]
-offset_right = 100.0
-offset_bottom = 207.0
+offset_right = 240.0
+offset_bottom = 240.0
 mouse_filter = 1
 slot/0/left_enabled = false
 slot/0/left_type = 0
@@ -107,6 +107,6 @@ text = "Score: 0"
 layout_mode = 2
 text = "Visits: 0"
 
-[node name="Button" type="Button" parent="."]
+[node name="ToggleButton" type="Button" parent="."]
 layout_mode = 2
-text = "toggle"
+text = "+"
