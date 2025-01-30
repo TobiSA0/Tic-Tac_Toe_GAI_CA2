@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://Skripts/Util_Skripts/Game_Manager.gd" id="1_nj5h8"]
 [ext_resource type="PackedScene" uid="uid://dsskgw5cr58hl" path="res://Scenes/UI/ui_layer.tscn" id="2_cndu8"]
 [ext_resource type="PackedScene" uid="uid://bh365v7kvqxck" path="res://Scenes/player.tscn" id="4_3pvno"]
-[ext_resource type="PackedScene" uid="uid://bud6i3cax52rk" path="res://Scenes/mcts_graph_edit.tscn" id="5_fj1yh"]
+[ext_resource type="PackedScene" uid="uid://c818ruc7jdqkt" path="res://Scenes/mcts_graph.tscn" id="5_fj1yh"]
 
 [node name="Main_Scene" type="Node2D"]
 script = ExtResource("1_nj5h8")
@@ -22,4 +22,3 @@ game_manger = NodePath("..")
 game_manger = NodePath("..")
 
 [node name="MCTSGraphWindow" parent="." instance=ExtResource("5_fj1yh")]
-visible = false

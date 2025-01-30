@@ -22,4 +22,3 @@ game_manger = NodePath("..")
 game_manger = NodePath("..")
 
 [node name="MCTSGraphWindow" parent="." instance=ExtResource("5_fj1yh")]
-visible = false

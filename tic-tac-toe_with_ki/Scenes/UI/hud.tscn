@@ -55,7 +55,7 @@ offset_left = 359.0
 offset_top = 593.0
 offset_right = 663.0
 offset_bottom = 625.0
-selected = 3
+selected = 2
 item_count = 4
 popup/item_0/text = "Human"
 popup/item_1/text = "MinMax"
@@ -65,13 +65,22 @@ popup/item_2/id = 2
 popup/item_3/text = "None"
 popup/item_3/id = 3
 
+[node name="Selector2Iterations" type="LineEdit" parent="."]
+layout_mode = 0
+offset_left = 358.0
+offset_top = 634.0
+offset_right = 662.0
+offset_bottom = 666.0
+placeholder_text = "Enter iterations (MCTS, max: 100.000)"
+context_menu_enabled = false
+
 [node name="Selector_1" type="OptionButton" parent="."]
 layout_mode = 0
 offset_left = 358.0
 offset_top = 482.0
 offset_right = 662.0
 offset_bottom = 514.0
-selected = 3
+selected = 0
 item_count = 4
 popup/item_0/text = "Human"
 popup/item_1/text = "MinMax"
@@ -83,23 +92,33 @@ popup/item_3/id = 3
 
 [node name="Play_Button" type="Button" parent="."]
 layout_mode = 0
-offset_left = 251.0
-offset_top = 691.0
-offset_right = 556.0
-offset_bottom = 771.0
+offset_left = 250.0
+offset_top = 690.0
+offset_right = 550.0
+offset_bottom = 770.0
 scale = Vector2(0.798527, 0.825834)
 theme_override_font_sizes/font_size = 50
 text = "PLAY"
 
 [node name="Reset_Button" type="Button" parent="."]
 layout_mode = 0
-offset_left = 288.0
-offset_top = 787.0
-offset_right = 504.0
-offset_bottom = 846.0
+offset_left = 275.0
+offset_top = 775.0
+offset_right = 525.0
+offset_bottom = 834.0
 scale = Vector2(0.798527, 0.825834)
 theme_override_font_sizes/font_size = 32
 text = "Relod"
+
+[node name="Graph_Window_Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 275.0
+offset_top = 840.0
+offset_right = 525.0
+offset_bottom = 899.0
+scale = Vector2(0.798527, 0.825834)
+theme_override_font_sizes/font_size = 32
+text = "Graph Window"
 
 [node name="Ingame_text" type="Label" parent="."]
 layout_mode = 0
@@ -108,7 +127,7 @@ offset_top = 902.0
 offset_right = 906.0
 offset_bottom = 974.0
 text = "Choose smales Score
-"
+
 label_settings = SubResource("LabelSettings_o0qag")
 horizontal_alignment = 1
 
