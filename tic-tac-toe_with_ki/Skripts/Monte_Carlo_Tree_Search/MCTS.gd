@@ -1,152 +1,42 @@
-extends Controler
 class_name MCTS
+extends Controler
 
+const DEBUG: bool = false
 const ITERATIONS: int = 1000
-@onready var enemy: String = "Player1" if player_name == "Player2" else "Player2"
+const TREE_NODE = preload("res://Scenes/tree_node.tscn")
+
+@onready var graph_edit: MctsGraphEdit = $"../../MCTSGraphWindow/MCTSGraph"
+@onready var symbol: String = "O" if self.player_name == "Player1" else "X"
 var root: TreeNode
-
-var timer_is_done = false
-var timer_active = false
-var time_to_wait = 8
-var timer:Timer
-
+var tree_nodes: Array[TreeNode]
+var win_combinations = [
+		[0, 1, 2], # 1st row
+		[3, 4, 5], # 2nd row
+		[6, 7, 8], # 3rd row
+		[0, 3, 6], # 1st column
+		[1, 4, 7], # 2nd column
+		[2, 5, 8], # 3rd column
+		[0, 4, 8], # 1st diagonal
+		[2, 4, 6], # 2nd diagonal
+	]
+	
+#
 func _ready() -> void:
-	timer = Timer.new()
-	timer.connect("timeout",Callable(self,"_on_timer_timeout"))
-	get_parent().add_child(timer)
+	self.graph_edit.mcts = self
 
-func _on_timer_timeout():
-	print("hi")
-	timer_is_done = true
-	
-func start_timer():
-	timer.wait_time = time_to_wait
-	timer.start()
-
-# tree node class definition
-class TreeNode:
-	var board: Array[String]
-	var children: Array[TreeNode]
-	#var current_player: String
-	var is_fully_expanded: bool
-	var is_terminal: bool
-	var parent: TreeNode
-	var possible_moves: Array[int]
-	var expanded_moves: Array[int]
-	var score: float
-	var visits: float
-
-	# constructor
-	func _init(board: Array[String], parent: TreeNode = null):
-		self.board = board.duplicate(true)
-		self.children = []
-		#self.current_player = "Player1" if self.parent.current_player == "Player2" else "Player2"
-		self.is_fully_expanded = false
-		self.is_terminal = false
-		self.parent = parent
-		self.possible_moves = []
-		self.expanded_moves = []
-		self.score = 0.0
-		self.visits = 0.0
-
-# determine which move is the best
+# play best move for current board state
 func action():
+	var best_node: TreeNode = self.search()
+	# play best move
+	print("best move: ", best_node.move_index)
+	return playfield.get_list_of_fields()[best_node.move_index]
 
-	var initial_board: Array[String] = []
-	for field in playfield.get_list_of_fields():
-		initial_board.append(field.get_content())
-		
-	if not timer_active:
-		print("lol ")	
-		visualize_algorithm(initial_board)
-	
-	if timer_is_done:
-		playfield.hide_visualization()
-		var best_move: int = self.search(initial_board)
-		timer_is_done = false
-		timer_active = false
-		timer.stop()
-		return playfield.get_list_of_fields()[best_move]
-
-#ALGORITHM
-func search(initial_board: Array[String]) -> int:
-	# create root node
-	var copied_board = initial_board.duplicate(true)
-	self.root = TreeNode.new(copied_board, null)
-	# walk through x iterations
-	for iteration in range(ITERATIONS):
-		# select a node (selection)
-		var node = self.select(self.root)
-		
-		# score for current node (simulation)
-		var score = self.rollout(node.board)
-		
-		# backpropagate the number of visits and score up to the root node
-		self.backpropagate(node, score)
-	
-	# pick the best move in the current board
-	var best_node: TreeNode = self.get_best_move(self.root, 0)
-	var best_board: Array[String] = best_node.board
-	for index in range(len(best_board)):
-		if best_board[index] != copied_board[index]:
-			return index
-	# should not reach this
-	return 9
-
-# select most promising node
-func select(node: TreeNode) -> TreeNode:
-	# make sure we're dealing with non-terminal nodes
-	while not node.is_terminal:
-		# case: node is fully expanded
-		if node.is_fully_expanded:
-			node = self.get_best_move(node, 2)
-		# case: node is not fully expanded
-		else:
-			# otherwise expand the node
-			return self.expand(node) #return self.expand(node)
-	#print("BREAK")
-	return node
-
-# expand a node
-func expand(node: TreeNode) -> TreeNode:
-	# legal boards after one move for the given node
-	var possible_boards = []
-	var possible_moves: Array[int] = _get_possible_moves(node.board) #node.possible_moves
-	# check which turn it is depending on amount of possible moves and therefore moves made/simulated
-	var symbol = "X" if (len(possible_moves) % 2 == 0) else "O"
-	# generate outcome boards for each possible move
-	for move in possible_moves:
-		#if len(possible_moves) < 3:
-			#print("BREAK")
-		# make sure that child is not already created and appended
-		if not node.expanded_moves.has(move):
-			# initial board copy
-			var current_board = node.board.duplicate(true)
-			# create new board
-			#print("1:", current_board)
-			var new_board: Array[String] = simulate_move(current_board, move, symbol).duplicate(true)
-			#print("2: ", current_board)
-			#print("3: ", new_board)
-			# create a new child
-			var child_node = TreeNode.new(new_board, node)
-			# add child node to parent node
-			node.children.append(child_node)
-			# check if child node is terminal
-			if len(possible_moves) == 1:
-				child_node.is_terminal = true
-			if len(possible_moves) == len(node.children):
-				node.is_fully_expanded = true
-			# add move to expanded_moves
-			node.expanded_moves.append(move)
-			# remove move from possible_moves
-			#node.possible_moves.remove_at(0)
-			# return child node
-			return child_node
-	# after expaning every move, set parent to fully expanded
-	#node.is_fully_expanded = true
-	# debug
-	print("Should not get here! No child node returned when expanding.")
-	return null
+func add_node(board: Array[String], parent_node: TreeNode, move_index: int) -> TreeNode:
+	var tree_node: TreeNode = TREE_NODE.instantiate()
+	self.tree_nodes.append(tree_node)
+	tree_node.add_values(board, parent_node, move_index)
+	#tree_node.title = str(self.node_counter)
+	return tree_node
 
 # backpropagate the number of visits and score up to the root node
 func backpropagate(node: TreeNode, score: float) -> void:
@@ -159,85 +49,61 @@ func backpropagate(node: TreeNode, score: float) -> void:
 		# set node to parent
 		node = node.parent
 
-# simulate the game with random moves until board is filled (end of game)
-func rollout(board: Array[String]) -> int:
-	#var current_player: String = self.player_name
-	var board_simulation: Array[String] = board.duplicate(true)
-	# make random moves for both sides until game is terminal
-	while not check_simulation_terminal(board_simulation):
-		# make a random move for current player
-		#board_simulation = generate_board_randomly(board_simulation)
-		board_simulation = random_move(board_simulation)
-		# swap current player for possible next turn
-		#current_player = self.player_name if current_player != self.player_name else self.enemy
-	# return the score corresponding to game result
-	var winner_name = check_simulation_winner(board_simulation)
-	if winner_name == player_name: # player wins simulation
-		return 1
-	elif winner_name == enemy: # enemy wins simulation
-		return -1
-	else: # draw simulation
-		return 0
+func delete_irrelevant_nodes(node: TreeNode) -> void:
+		if node and node != self.root:
+			for child in node.children:
+				if child != self.root:
+					delete_irrelevant_nodes(child)
+			self.tree_nodes.erase(node)
+			node.free()
 
-# make random, legal move on a board simulation for current player
-func generate_board_randomly(board_simulation: Array[String]) -> Array[String]:
-	var current_player: String = self.player_name
-	# define possible moves
-	var possible_moves = []
-	# loop through board
-	for index in range(len(board_simulation)):
-		# make sure field is empty
-		if board_simulation[index] == "":
-			# add move to possible_moves
-			possible_moves.append(index)
-	# if moves possible
-	while len(possible_moves) > 0:
-		var symbol = "X" if (len(possible_moves) % 2 == 0) else "O"
-		# do random move for current player
-		var random_index = randi() % len(possible_moves)
-		#print("random_index = ", random_index)
-		#board_simulation[random_index + 1] = "X" if current_player == "Player2" else "O"
-		board_simulation[random_index + 1] = symbol
-		possible_moves.remove_at(random_index)
-		# swap current player for possible next turn
-		current_player = self.player_name if current_player != self.player_name else self.enemy
-	return board_simulation
-
-# make random, legal move on a board simulation for current player
-func random_move(board_simulation: Array[String]) -> Array[String]:
-	# define possible moves
-	var possible_moves = []
-	# loop through board
-	for index in range(len(board_simulation)):
-		# make sure field is empty
-		if board_simulation[index] == "":
-			# add move to possible_moves
-			possible_moves.append(index)
-	# if moves possible, do a random move
-	if len(possible_moves) > 0:
-		var symbol = "X" if (len(possible_moves) % 2 == 0) else "O"
-		var random_index = randi() % len(possible_moves)
-		#print("random_index = ", random_index)
-		board_simulation[possible_moves[random_index]] = symbol
-	return board_simulation
+# expand a node
+func expand(node: TreeNode) -> TreeNode:
+	# generate outcome boards for each possible move
+	for move_index in node.possible_moves:
+		# make sure that move has not been simulated already
+		if not node.expanded_moves.has(move_index):
+			# add expanded move to expanded_moves
+			node.expanded_moves.append(move_index)
+			# remove expanded move from possible_moves
+			node.possible_moves.erase(move_index)
+			# create new board
+			var new_board: Array[String] = simulate_move(node.board, move_index, self.get_symbol(node.board))
+			var tree_node: TreeNode
+			# create a new child
+			tree_node = self.add_node(new_board, node, move_index)
+			# add child node to parent node
+			node.children.append(tree_node)
+			# check if child node is terminal
+			if is_terminal(tree_node.board):
+				tree_node.is_terminal = true
+			# check if parent node is fully expanded
+			if len(node.possible_moves) == 0:
+				node.is_fully_expanded = true
+			# return child node
+			return tree_node
+	# debug
+	print("Should not get here! No child node returned when expanding.")
+	return null
 
 # select the best node based on UCB1 formula
-func get_best_move(node: TreeNode, exploration_constant: int) -> TreeNode:
+func get_best_move(node: TreeNode, exploration_constant: float) -> TreeNode:
 	# define best score and best moves
 	var best_score: float = -INF
 	var best_moves: Array[TreeNode] = []
 	
 	# loop over child nodes
 	for child_node in node.children:
-		# define current player
-		var current_player = 1 if player_name == "Player1" else -1
 		# get move score using UCT formula
-		var move_score = current_player * child_node.score / child_node.visits + exploration_constant * sqrt(log(node.visits / child_node.visits))
-		if exploration_constant == 0:
-			move_score = child_node.score
-		#if move_score.is_nan():
-			#continue
-			
+		var move_score: float = (child_node.score / child_node.visits) + exploration_constant * sqrt((log(node.visits) / child_node.visits))
+		
+		# debug
+		#if exploration_constant == 0:
+			#print("amount of children: ", len(node.children))
+			#print("child score: ", child_node.score)
+			#print("child visits: ", child_node.visits)
+			#print("move_score for child with move index ", child_node.move_index, ": ", move_score)
+		
 		# better move is found
 		if move_score > best_score:
 			best_score = move_score
@@ -247,110 +113,152 @@ func get_best_move(node: TreeNode, exploration_constant: int) -> TreeNode:
 		elif move_score == best_score:
 			best_moves.append(child_node)
 	
-	# return one of the best move randomly
+	# return one of the best moves randomly
 	var random_index = randi() % best_moves.size()
-	
+	if exploration_constant == 0:
+		print("BREAK")
 	return best_moves[random_index]
 
-# get all possible moves for a board
-func _get_possible_moves(board: Array[String]) -> Array[int]:
-	var possible_moves: Array[int] = []
-	for i in range(board.size()):
-		if board[i] == "":
-			possible_moves.append(i)
-	return possible_moves
+func get_current_board() -> Array[String]:
+	# create current board state as string array
+	var current_board: Array[String] = []
+	for field in self.playfield.get_list_of_fields():
+		current_board.append(field.get_content())
+	return current_board
 
-# simulate a move on a board and return the new board
-func simulate_move(board: Array[String], move: int, symbol: String) -> Array[String]:
-	#var copy = board.duplicate(true)
-	board[move] = symbol
-	return board
+#func get_current_board() -> Array[Field]:
+	#return self.board
 
-# check if game is terminal for a given board
-func check_terminal(board: Array[String]) -> bool:
+# get a score for a board simulation
+func get_score(board: Array[String]) -> int:
+	# check for each win combination if board state matches it with one symbol
+	for combination in self.win_combinations:
+		var board_values: Array[String] = []
+		for index in combination:
+			board_values.append(board[index])
+		# check if X or O matches all 3 spots in win combination
+		if board_values[0] != "" and board_values[0] == board_values[1] and board_values[0] == board_values[2]:
+			# win or lose
+			return 1 if board_values[0] == self.symbol else -1
+	# draw
+	return 0
+
+func get_symbol(board: Array[String]) -> String:
+	var counter: int
 	for field in board:
-		if field == "":
-			return false
-	return true
+		if field != "":
+			counter +=1
+	return "O" if counter % 2 == 0 else "X"
 
 # check if there is a terminal state in a board simulation
-func check_simulation_terminal(simulation_board) -> bool:
+func is_terminal(board: Array[String]) -> bool:
 	# check if there is a winner
-	var winner: String = check_simulation_winner(simulation_board)
-	if winner != "No Winner":
+	if is_won(board):
 		return true
 	# check if there is a draw
-	for field in simulation_board:
+	for field in board:
 		# check if field is empty
 		if field == "":
 			# if one field is empty, then there is no draw
 			return false
-	# if no field is empty, then there is a draw
+	# if no field is empty and there is no win, then there is a draw
 	return true
 
-# check if there is a winner in a board simulation
-func check_simulation_winner(simulation_board) -> String:
-	
-	var win_combinations = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [2, 4, 6], [0, 4, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8]]
-	for combination in win_combinations:
-		var values: Array[String] = []
-		for pos in combination:
-			values.append(simulation_board[pos])
-		if values[0] != "" and values[0] == values[1] and values[0] == values[2]:
-			# when Player1 is
-			return "Player1" if values[0] == "O" else "Player2"
-	# no winner
-	return "No Winner"
-	
-	
-	
-func calculate_win_probabilities(initial_board: Array[String]) -> Dictionary:
-	# Dictionary to store win probabilities
-	var win_probabilities: Dictionary = {}
-	var copied_board = initial_board.duplicate(true)
-	self.root = TreeNode.new(copied_board, null)
-	
-	# Perform MCTS simulations
-	for iteration in range(ITERATIONS):
-		var node = self.select(self.root)
-		var score = self.rollout(node.board)
-		self.backpropagate(node, score)
+func is_won(board: Array[String]) -> bool:
+	# check for each win combination if board state matches it with one symbol
+	for combination in self.win_combinations:
+		var board_values: Array[String] = []
+		for index in combination:
+			board_values.append(board[index])
+		# check if X or  matches all 3 spots in win combination
+		if board_values[0] != "" and board_values[0] == board_values[1] and board_values[0] == board_values[2]:
+			# win
+			return true
+	# no win
+	return false
 
-	# Calculate probabilities for each move
-	for move in _get_possible_moves(initial_board):
-		# Check if move has a corresponding child node
-		for child in self.root.children:
-			if child.board[move] != initial_board[move]:
-				# Calculate win probability as visits or score divided by root visits
-				var probability = child.score / child.visits if child.visits > 0 else 0.0
-				win_probabilities[move] = round(probability * 100)
+# make random, legal move on a board simulation for current player
+func random_move(board_simulation: Array[String]) -> Array[String]:
+	# define possible moves
+	var possible_moves = []
+	# loop through board
+	for index in range(len(board_simulation)):
+		# write down empty field indexes as possible moves
+		if board_simulation[index] == "":
+			# add move to possible_moves
+			possible_moves.append(index)
+	# if moves possible, do a random move
+	if len(possible_moves) > 0:
+		var random_index = randi() % len(possible_moves)
+		#print("random_index = ", random_index)
+		board_simulation[possible_moves[random_index]] = get_symbol(board_simulation)
+	return board_simulation
+
+# simulate the game with random moves until end of game is reached
+func rollout(board: Array[String]) -> int:
+	#var current_player: String = self.player_name
+	var board_simulation: Array[String] = board.duplicate(true)
+	# make random moves for both sides until game is terminal
+	while not is_terminal(board_simulation):
+		# make a random move for current player
+		board_simulation = random_move(board_simulation)
+	# return the score corresponding to game result
+	return get_score(board_simulation)
+
+# search for the turn with the best win probability
+func search() -> TreeNode:
+	# create new root node on first turn
+	if self.root == null:
+		self.root = self.add_node(self.get_current_board(), null, -1)
+		self.root.graph_edit = self.graph_edit
+		self.graph_edit.add_child(self.root)
+	# overwrite root node on following turns
+	else:
+		var old_root = self.root
+		for tree_node in self.tree_nodes:
+			if self.get_current_board() == tree_node.board:
+				self.root = tree_node
+				# delete all irrelevant nodes
+				self.delete_irrelevant_nodes(old_root)
+				self.root.position_offset = Vector2(0, 0)
 				break
-			else:
-				win_probabilities[move] = 0.0  # No valid data, assume 0 probability
+	# run through iterations
+	for iteration in range(ITERATIONS - 1):
+		# selection
+		var tree_node = self.select(self.root)
+		# simulation
+		var score = self.rollout(tree_node.board)
+		# backpropagation
+		self.backpropagate(tree_node, score)
+	# pick the best child for the root (best move for current board state)
+	var index: int
+	var best_node: TreeNode = self.get_best_move(self.root, 0)
+	index = best_node.move_index
+	if index < 0 or index > 8:
+		# shouldn't get here
+		push_error("Illegale move was calculated")
+	return best_node
 
-	return win_probabilities
+# select most promising child node
+func select(node: TreeNode) -> TreeNode:
+	# debug
+	if node != self.root:
+		print("BREAK")
+	# make sure we're dealing with non-terminal nodes
+	while not node.is_terminal:
+		# case: node is fully expanded
+		if node.is_fully_expanded:
+			#print("For iteration ", self.current_iteration, " algorithm is getting best move!")
+			node = self.get_best_move(node, 5)
+		# case: node is not fully expanded
+		else:
+			# otherwise expand the node
+			#print("For iteration ", self.current_iteration, " algorithm is expanding!")
+			return self.expand(node)
+	return node
 
-
-
-func visualize_algorithm(board):
-	var probabilities = self.calculate_win_probabilities(board)
-	var field_board = playfield.get_list_of_fields()
-	
-	for i in probabilities.keys():
-		if field_board[i] is Field:
-			field_board[i].set_label(str(probabilities[i]))
-			field_board[i].show_label()
-			
-	if not timer_active:
-		timer_active = true
-		start_timer()
-		
-		
-		
-		
-		
-			
-			
-			
-	
-	
+# simulate a move on a given board state
+func simulate_move(board: Array[String], move: int, symbol: String) -> Array[String]:
+	var copy_board: Array[String] = board.duplicate(true)
+	copy_board[move] = symbol
+	return copy_board

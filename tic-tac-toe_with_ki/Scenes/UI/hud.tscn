@@ -91,6 +91,16 @@ scale = Vector2(0.798527, 0.825834)
 theme_override_font_sizes/font_size = 50
 text = "PLAY"
 
+[node name="Graph_Window_Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 275.0
+offset_top = 840.0
+offset_right = 525.0
+offset_bottom = 899.0
+scale = Vector2(0.798527, 0.825834)
+theme_override_font_sizes/font_size = 32
+text = "Graph Window"
+
 [node name="Reset_Button" type="Button" parent="."]
 layout_mode = 0
 offset_left = 288.0
