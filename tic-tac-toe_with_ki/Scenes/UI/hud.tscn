@@ -126,8 +126,7 @@ offset_left = 134.0
 offset_top = 950.0
 offset_right = 696.0
 offset_bottom = 1022.0
-text = "\"Name\"  your Turn
-"
+text = "Choose smales Score"
 label_settings = SubResource("LabelSettings_o0qag")
 
 [node name="Choose_player_text" type="Label" parent="."]
