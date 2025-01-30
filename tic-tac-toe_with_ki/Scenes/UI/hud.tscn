@@ -122,13 +122,14 @@ text = "Graph Window"
 
 [node name="Ingame_text" type="Label" parent="."]
 layout_mode = 0
-offset_left = 134.0
-offset_top = 950.0
-offset_right = 696.0
-offset_bottom = 1022.0
-text = "\"Name\"  your Turn
-"
+offset_left = 109.0
+offset_top = 902.0
+offset_right = 906.0
+offset_bottom = 974.0
+text = "Choose smales Score
+
 label_settings = SubResource("LabelSettings_o0qag")
+horizontal_alignment = 1
 
 [node name="Choose_player_text" type="Label" parent="."]
 layout_mode = 0

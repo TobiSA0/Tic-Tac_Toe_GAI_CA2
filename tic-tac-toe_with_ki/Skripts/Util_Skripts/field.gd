@@ -2,17 +2,17 @@ extends Node2D
 class_name Field
 
 # hier speicher ich intern ob es ein X oder ein O ist als string ist einfacher als immer nur nach den Assets zu gehen  
-var content:String = ""  
+var content: String = ""  
+var score: float = 0.0
 
-# verweiß auf das label 
-@onready var label:Label = $Label
+@onready var label: Label = $Label
 
-#getter methdoe um auf den inhalt zugriff zu haben 
+# getter methdoe um auf den inhalt zugriff zu haben 
 func get_content()-> String:
 	return content
 
 # seter _ schaut welcher spieler und setzt dan x oder O  -> 0 is bei und spiler 1 
-func set_contet(player:String):
+func set_content(player:String):
 	if player == "Player1":
 		content = "O"
 	elif player == "Player2":
@@ -20,16 +20,27 @@ func set_contet(player:String):
 	else:
 		content = ""
 
-# hier könnte man dan auch noch theoretisch die Farbe setzten 
-func set_label(value:String):
-	#label.label_settings.font_color = Color.RED - BSP wie man dort dan auch die Farbe Setzen kann und größe ( erst am ende ) 
-	label.text = value + "%"
+func set_score(score: float):
+	self.score = score
 	
-# anzeigen 
+func get_score():
+	return score
+
+func set_highlighted(highlight: bool, color: Color = Color(1, 0, 0)) -> void:
+	if highlight:
+		self.get_child(0).modulate = color # rot einfärben
+	else:
+		self.get_child(0).modulate = Color(1, 1, 1) # Zurücksetzen auf Standardfarbe
+
+func set_label(value:String):
+	label.text = value 
+	
+func get_label_text():
+	return label.text
+
 func show_label():
 	label.show()
 	
-# verstecken 
 func hide_label():
 	label.hide()
 

@@ -24,7 +24,9 @@ var turn_counter = 1
 func _ready() -> void:
 	game_hud.connect("button_pressed",Callable(self,"_on_button_pressed"))
 	game_hud.connect("reset_pressed",Callable(self,"_on_reset_pressed"))
-	game_hud.connect("graph_button_pressed",Callable(self,"_on_graph_button_pressed"))
+
+	game_hud.hide_ingame_test()
+
 
 
 # wenn jeweiliger button gedrückt dann arbeite damit  und führe aus was drin steht 
@@ -87,9 +89,9 @@ func _physics_process(delta: float) -> void:
 	if game_is_set_up:
 		if not game_is_won() && not check_draw():
 			if turn_counter % 2 != 0:
-				player1.turn()
+				await player1.turn()
 			else:
-				player2.turn()
+				await player2.turn()
 				
 		else:
 			if game_is_won():
