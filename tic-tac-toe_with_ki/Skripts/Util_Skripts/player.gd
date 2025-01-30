@@ -3,7 +3,8 @@ class_name Player
 		
 		
 @export var game_manger:Game_Manger # verweis auf game_manger
-var play_algorithem: Controler # speciherort für den play_algorithem
+var play_algorithem:Controler # speciherort für den play_algorithem
+		
 @onready var X = preload("res://Scenes/Tic-Tac_Toe_elements/X_character.tscn") # packed scenes für X und O
 @onready var O = preload("res://Scenes/Tic-Tac_Toe_elements/O_character.tscn")
 
@@ -35,7 +36,7 @@ func add_play_algoritem_to_player(play_algo):
 		self.add_child(play_algorithem)
 		
 	else:
-		printerr("fehler")
+		printerr("fehler")	
 
 # funktion die später vl noch wichtig ist wenn man runden übergreifent arbeiten will 		
 func remove_controler():
