@@ -8,34 +8,35 @@
 script = ExtResource("1_r1nbu")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(8, 2)
 scale = Vector2(1.492, 1.492)
 texture = ExtResource("1_7ep7a")
 
 [node name="Field_Points" type="Node2D" parent="."]
 
 [node name="Field" parent="Field_Points" instance=ExtResource("2_vld80")]
-position = Vector2(-273, -240)
+position = Vector2(-264, -211)
 
 [node name="Field2" parent="Field_Points" instance=ExtResource("2_vld80")]
-position = Vector2(-5, -235)
+position = Vector2(-1, -215)
 
 [node name="Field3" parent="Field_Points" instance=ExtResource("2_vld80")]
-position = Vector2(227, -231)
+position = Vector2(256, -216)
 
 [node name="Field4" parent="Field_Points" instance=ExtResource("2_vld80")]
-position = Vector2(-284, 7)
+position = Vector2(-269, 7)
 
 [node name="Field5" parent="Field_Points" instance=ExtResource("2_vld80")]
-position = Vector2(-2, 7)
+position = Vector2(-2, 9)
 
 [node name="Field6" parent="Field_Points" instance=ExtResource("2_vld80")]
-position = Vector2(258, 7)
+position = Vector2(256, 12)
 
 [node name="Field7" parent="Field_Points" instance=ExtResource("2_vld80")]
-position = Vector2(-291, 256)
+position = Vector2(-270, 256)
 
 [node name="Field8" parent="Field_Points" instance=ExtResource("2_vld80")]
-position = Vector2(-8, 259)
+position = Vector2(-1, 258)
 
 [node name="Field9" parent="Field_Points" instance=ExtResource("2_vld80")]
-position = Vector2(255, 269)
+position = Vector2(259, 268)

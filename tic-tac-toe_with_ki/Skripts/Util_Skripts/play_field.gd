@@ -19,3 +19,8 @@ func hide_visualization():
 	for field in field_points.get_children():
 		if field is Field:
 			field.hide_label()
+
+func show_visualization():
+	for field in field_points.get_children():
+		if field is Field and field.content == "" and field.get_label_text() != "%":
+			field.show_label()

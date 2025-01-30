@@ -88,9 +88,9 @@ func _physics_process(delta: float) -> void:
 	if game_is_set_up:
 		if not game_is_won() && not check_draw():
 			if turn_counter % 2 != 0:
-				player1.turn()
+				await player1.turn()
 			else:
-				player2.turn()
+				await player2.turn()
 				
 		else:
 			if game_is_won():
