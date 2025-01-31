@@ -180,6 +180,7 @@ label_settings = SubResource("LabelSettings_o0qag")
 horizontal_alignment = 1
 
 [node name="maxi_info" type="Label" parent="HUD"]
+layout_mode = 0
 offset_left = 220.0
 offset_top = 491.0
 offset_right = 595.0
@@ -188,6 +189,7 @@ text = "Maximirer = Win>0 - Lose <0 - Draw = 0"
 label_settings = SubResource("LabelSettings_yxap3")
 
 [node name="mini_info" type="Label" parent="HUD"]
+layout_mode = 0
 offset_left = 221.0
 offset_top = 600.0
 offset_right = 596.0

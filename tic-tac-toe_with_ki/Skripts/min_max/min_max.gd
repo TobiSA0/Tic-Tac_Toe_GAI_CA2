@@ -110,7 +110,6 @@ func minmax(board, depth, is_maximizing) -> int:
 		for field in board:
 			if field is Field and field.get_content() == "":
 				field.set_content("Player1")
-				
 				var score = minmax(board, depth + 1, false)
 				field.set_content("")
 			
@@ -121,8 +120,6 @@ func minmax(board, depth, is_maximizing) -> int:
 		for field in board:
 			if field is Field and field.get_content() == "":
 				field.set_content("Player2")
-				
-				
 				var score = minmax(board, depth + 1, true)
 				field.set_content("")  # Feld zuruecksetzen
 				
@@ -172,7 +169,7 @@ func process_visualization():
 		elif action == "reset" and not (field == best_field):
 			field.set_highlight(false)  # Highlight zuruecksetzen
 
-		# Starte den nÃ¤chsten Schritt nach einer kurzen Pause
+		# Starte den nächsten Schritt nach einer kurzen Pause
 		get_tree().create_timer(0.3).timeout.connect(process_visualization)
 	else:
 		emit_signal("visualization_finished")

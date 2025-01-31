@@ -58,7 +58,7 @@ func setup_game():
 	
 	if player1.algorithm is Min_Max:
 		game_hud.min_max_info_label_1.show()
-	else:
+	elif player2.algorithm is Min_Max:
 		game_hud.min_max_info_label_2.show()
 	
 	is_game_set_up = true
