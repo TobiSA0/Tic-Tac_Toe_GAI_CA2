@@ -18,7 +18,7 @@ func add_algorithm_to_player(algorithm_id: int):
 		self.algorithm = HumanPlayer.new(self.game_manager, self.get_name())
 		self.add_child(self.algorithm)
 	if algorithm_id == 1:
-		self.algorithm = MinMax.new(self.game_manager, self.get_name())
+		self.algorithm = Min_Miax.new(self.game_manager, self.get_name())
 		self.add_child(self.algorithm)
 	if algorithm_id == 2:
 		self.algorithm = MCTSAlgorithm.new(self.game_manager, self.get_name())

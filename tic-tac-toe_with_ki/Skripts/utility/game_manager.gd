@@ -66,7 +66,6 @@ func game_is_won():
 		for index in combinations:
 			values.append(board[index])
 		if values[0].get_content() != "" and values[0].get_content() == values[1].get_content() and values[1].get_content() == values[2].get_content():
-			print("hi")
 			winner = values[0].get_content()
 			return true 
 	return false 
