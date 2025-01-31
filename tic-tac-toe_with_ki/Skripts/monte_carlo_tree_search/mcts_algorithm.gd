@@ -1,26 +1,40 @@
 class_name MCTSAlgorithm
 extends Controller
 
-const DEBUG: bool = false
-const ITERATIONS: int = 1000
+const DEBUG: bool = true
 const MCTS_TREE_NODE = preload("res://Scenes/mcts/mcts_tree_node.tscn")
 
-@onready var mcts_graph_edit: MCTSGraphEdit = $"../../MCTSGraphEditWindow/MCTSGraphEdit"
+@onready var enemy: Player = self.game_manager.player2 if self.player_name == "Player1" else self.game_manager.player1
+@onready var mcts_graph_edit: MCTSGraphEdit = $"../../MCTSGraphEditWindow1/MCTSGraphEdit" if self.player_name == "Player1" else $"../../MCTSGraphEditWindow2/MCTSGraphEdit"
 @onready var symbol: String = "X" if self.player_name == "Player1" else "O"
+@onready var next_button: Button = $"../../UI/HUD/MCTSNextButton"
+@onready var is_turn: bool = true if self.player_name == "Player1" else false
+var iterations: int = 1000 # default value, can be overwritten with line edit field
 var root: MCTSTreeNode
 var tree_nodes: Array[MCTSTreeNode]
 
+signal next_button_pressed
 #
 func _ready() -> void:
 	self.mcts_graph_edit.mcts_algorithm = self
+	if self.next_button:
+		self.next_button.pressed.connect(_on_next_button_pressed)
+
+func _on_next_button_pressed() -> void:
+	if self.game_manager.turn_counter % 2 != 0:
+		self.game_manager.player1.algorithm.is_turn = true
+	else:
+		self.game_manager.player2.algorithm.is_turn = true
 
 # play best move for current board state
 func action():
-	var best_node: MCTSTreeNode = self.search()
-	# play best move
-	if self.DEBUG:
-		print("MCTS best move index: ", best_node.move_index)
-	return board.get_list_of_fields()[best_node.move_index]
+	if enemy.algorithm is not MCTSAlgorithm or self.is_turn:
+		self.is_turn = false
+		var best_node: MCTSTreeNode = self.search()
+		# play best move
+		if self.DEBUG:
+			print("MCTS best move index: ", best_node.move_index)
+		return board.get_list_of_fields()[best_node.move_index]
 
 func add_node(board: Array[String], parent_node: MCTSTreeNode, move_index: int) -> MCTSTreeNode:
 	var tree_node: MCTSTreeNode = MCTS_TREE_NODE.instantiate()
@@ -212,13 +226,28 @@ func search() -> MCTSTreeNode:
 				# add new root as root in graph if not already added
 				if self.root not in self.mcts_graph_edit.get_children():
 					self.mcts_graph_edit.add_child(self.root)
+				self.root.position_offset = Vector2(0, 0)
 				# align nodes if any expanded
 				if self.mcts_graph_edit.get_children().size() > 2:
 					self.mcts_graph_edit.align_nodes()
-				self.root.position_offset = Vector2(0, 0)
 				break
+		if self.root == old_root:
+			print("BREAK")
+			# when new board state has not been expanded yet (not enough iterations before)
+			self.root = self.add_node(self.get_current_board(), null, -1)
+			self.root.mcts_graph_edit = self.mcts_graph_edit
+			self.mcts_graph_edit.add_child(self.root)
+			# delete all irrelevant nodes
+			self.delete_irrelevant_nodes(old_root)
+			# add new root as root in graph if not already added
+			if self.root not in self.mcts_graph_edit.get_children():
+				self.mcts_graph_edit.add_child(self.root)
+			self.root.position_offset = Vector2(0, 0)
+			# align nodes if any expanded
+			if self.mcts_graph_edit.get_children().size() > 2:
+				self.mcts_graph_edit.align_nodes()
 	# run through iterations
-	for iteration in range(ITERATIONS - 1):
+	for iteration in range(iterations - 1):
 		# selection
 		var tree_node: MCTSTreeNode = self.select(self.root)
 		# simulation
@@ -231,7 +260,7 @@ func search() -> MCTSTreeNode:
 	index = best_node.move_index
 	if index < 0 or index > 8:
 		# shouldn't get here
-		push_error("Illegale move was calculated")
+		push_error("Illegal move was calculated")
 	return best_node
 
 # select most promising child node
@@ -240,7 +269,7 @@ func select(node: MCTSTreeNode) -> MCTSTreeNode:
 	while not node.is_terminal:
 		# case: node is fully expanded
 		if node.is_fully_expanded:
-			node = self.get_best_move(node, 5)
+			node = self.get_best_move(node, 2)
 		# case: node is not fully expanded
 		else:
 			# otherwise expand the node

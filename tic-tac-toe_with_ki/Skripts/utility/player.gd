@@ -23,27 +23,10 @@ func add_algorithm_to_player(algorithm_id: int):
 	if algorithm_id == 2:
 		self.algorithm = MCTSAlgorithm.new(self.game_manager, self.get_name())
 		self.add_child(self.algorithm)
-	#match algorithm_id:
-		#0: self.algorithm = HumanPlayer.new(game_manager.board, game_manager, self.get_name())
-		#1: self.algorithm = MinMax.new(game_manager.board, game_manager, self.get_name())
-		#2: self.algorithm = MCTSAlgorithm.new(game_manager.board, game_manager, self.get_name())
-	#if self.algorithm:
-		#self.add_child(self.algorithm)
 
 # das ist die turn methdoe die einfach zum einen schaut ob ein feld ausgewählt wurde -> und zum andern dan je nach dem vom
 # welchem spiler weis welcches elemnt sie auf dem brett anzeigen soll 	
 func turn() -> void:
-	#if self.selected_field == null:
-		#self.selected_field = await self.algorithm.action()
-	#else:
-		#match self.get_name():
-			#"Player1": spawn_element(selected_field, symbol_x)
-			#"Player2": spawn_element(selected_field, symbol_o)
-			#_: printerr("No player selected")
-			#
-		#self.selected_field.set_content(self.get_name())
-		#self.game_manager.turn_counter += 1
-		#self.selected_field = null
 	if selected_field == null:
 		selected_field = await algorithm.action()
 	else:

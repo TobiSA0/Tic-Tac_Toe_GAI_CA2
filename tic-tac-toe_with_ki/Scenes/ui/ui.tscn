@@ -159,16 +159,6 @@ scale = Vector2(0.798527, 0.825834)
 theme_override_font_sizes/font_size = 32
 text = "Relod"
 
-[node name="MCTSGraphWindowButton" type="Button" parent="HUD"]
-layout_mode = 0
-offset_left = 226.0
-offset_top = 800.0
-offset_right = 476.0
-offset_bottom = 853.0
-scale = Vector2(0.798527, 0.825834)
-theme_override_font_sizes/font_size = 32
-text = "Graph Window"
-
 [node name="IngameText" type="Label" parent="HUD"]
 layout_mode = 0
 offset_left = 79.0
@@ -196,3 +186,33 @@ offset_right = 596.0
 offset_bottom = 631.0
 text = "Minimirer = Win< 0 - Lose >0 - Draw = 0"
 label_settings = SubResource("LabelSettings_yxap3")
+
+[node name="MCTSGraphWindowButton1" type="Button" parent="HUD"]
+layout_mode = 0
+offset_left = 226.0
+offset_top = 800.0
+offset_right = 346.0
+offset_bottom = 853.0
+scale = Vector2(0.798527, 0.825834)
+theme_override_font_sizes/font_size = 28
+text = "Graph 1"
+
+[node name="MCTSGraphWindowButton2" type="Button" parent="HUD"]
+layout_mode = 0
+offset_left = 329.0
+offset_top = 800.0
+offset_right = 449.0
+offset_bottom = 853.0
+scale = Vector2(0.798527, 0.825834)
+theme_override_font_sizes/font_size = 28
+text = "Graph 2"
+
+[node name="MCTSNextButton" type="Button" parent="HUD"]
+layout_mode = 0
+offset_left = 1761.0
+offset_top = 1023.0
+offset_right = 1936.0
+offset_bottom = 1078.0
+scale = Vector2(0.798527, 0.825834)
+theme_override_font_sizes/font_size = 28
+text = "Next move"

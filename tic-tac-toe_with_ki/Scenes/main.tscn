@@ -21,5 +21,6 @@ game_manager = NodePath("..")
 [node name="Player2" parent="." node_paths=PackedStringArray("game_manager") instance=ExtResource("4_5r7au")]
 game_manager = NodePath("..")
 
-[node name="MCTSGraphEditWindow" parent="." instance=ExtResource("5_v6qqh")]
-visible = false
+[node name="MCTSGraphEditWindow1" parent="." instance=ExtResource("5_v6qqh")]
+
+[node name="MCTSGraphEditWindow2" parent="." instance=ExtResource("5_v6qqh")]

@@ -6,13 +6,13 @@ var timer: Timer
 var field_scores = {}
 var timer_is_done = false
 var time_to_wait = 0.1
-var is_in_progress:bool = false
+var is_in_progress: bool = false
 var best_field = null
 var best_score = 0
 var total_score = 0
 var steps_queue = []  # Warteschlange für die Schritte (Felder und Aktionen)
 var is_maximizing: bool = false
-var hud:HUD
+var hud: HUD
 
 signal visualization_finished
 
@@ -34,9 +34,9 @@ func start_timer():
 func make_move():
 	# Maximierung oder Minimierung basierend auf dem Spieler
 	if is_maximizing:
-		hud.set_ingame_text("Hey i will choose the Biggest Score")	
+		hud.set_ingame_text("Choosing the biggest score")	
 	else:
-		hud.set_ingame_text("Hey i will choose the Smalest Score")
+		hud.set_ingame_text("Choosing the smallest score")
 		
 	
 	best_score = - INF if is_maximizing else INF  # Initialisiere besten Score
