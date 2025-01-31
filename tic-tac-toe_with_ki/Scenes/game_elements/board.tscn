@@ -1,0 +1,42 @@
+[gd_scene load_steps=4 format=3 uid="uid://3hq1we7nm4l3"]
+
+[ext_resource type="Texture2D" uid="uid://osnehbf44ciy" path="res://Assets/board.png" id="1_7ep7a"]
+[ext_resource type="Script" path="res://Skripts/utility/board.gd" id="1_r1nbu"]
+[ext_resource type="PackedScene" uid="uid://cqde76ftv6keo" path="res://Scenes/game_elements/field.tscn" id="2_vld80"]
+
+[node name="Board" type="Node2D"]
+script = ExtResource("1_r1nbu")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(8, 2)
+scale = Vector2(1.492, 1.492)
+texture = ExtResource("1_7ep7a")
+
+[node name="Fields" type="Node2D" parent="."]
+
+[node name="1" parent="Fields" instance=ExtResource("2_vld80")]
+position = Vector2(-264, -211)
+
+[node name="2" parent="Fields" instance=ExtResource("2_vld80")]
+position = Vector2(-1, -215)
+
+[node name="3" parent="Fields" instance=ExtResource("2_vld80")]
+position = Vector2(256, -216)
+
+[node name="4" parent="Fields" instance=ExtResource("2_vld80")]
+position = Vector2(-269, 7)
+
+[node name="5" parent="Fields" instance=ExtResource("2_vld80")]
+position = Vector2(-2, 9)
+
+[node name="6" parent="Fields" instance=ExtResource("2_vld80")]
+position = Vector2(256, 12)
+
+[node name="7" parent="Fields" instance=ExtResource("2_vld80")]
+position = Vector2(-270, 256)
+
+[node name="8" parent="Fields" instance=ExtResource("2_vld80")]
+position = Vector2(-1, 258)
+
+[node name="9" parent="Fields" instance=ExtResource("2_vld80")]
+position = Vector2(259, 268)

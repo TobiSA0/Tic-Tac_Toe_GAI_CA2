@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=3 uid="uid://dnsjo3hs0vegx"]
 
-[ext_resource type="Texture2D" uid="uid://cmvx566hb6kib" path="res://Assets/O_Picture.png" id="1_hdvrr"]
+[ext_resource type="Texture2D" uid="uid://cmvx566hb6kib" path="res://Assets/o_symbol.png" id="1_hdvrr"]
 
-[node name="O_Character" type="Node2D"]
+[node name="OCharacter" type="Node2D"]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.496, 0.496)

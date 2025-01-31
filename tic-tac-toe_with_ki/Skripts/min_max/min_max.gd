@@ -1,24 +1,20 @@
-extends Controler
-class_name Min_Miax
-
+class_name MinMax
+extends Controller
 
 ## zu dem hier das ist der min max in der basis - könnte sich noch überlegen, alpha bruning hinzuzufügen 
 ## aber mal schauen 
 
-var timer: Timer
-var field_scores = {}
-
-var timer_is_done = false
-var time_to_wait = 0.1
-
-var is_in_progress:bool = false
-
-var best_field = null
-var best_score = 0
-var total_score = 0
-var steps_queue = []  # Warteschlange für die Schritte (Felder und Aktionen)
+var best_field: Field = null
+var best_score: int = 0
+var field_scores: Dictionary = {}
+var is_in_progress: bool = false
 var is_maximizing: bool = false
-var hud:HUD
+var steps_queue: Array = []  # Warteschlange für die Schritte (Felder und Aktionen)
+var timer: Timer
+var timer_is_done: bool = false
+var time_to_wait: float = 0.1
+var total_score: int = 0
+var hud: HUD
 
 signal visualization_finished
 
@@ -40,21 +36,16 @@ func start_timer():
 
 func make_move():
 	# Maximierung oder Minimierung basierend auf dem Spieler
-	
 	if is_maximizing:
-		hud.set_ingame_text("Hey i will choose the Biggest Score")	
+		self.hud.set_ingame_text("Choosing the biggest score")
 	else:
-		hud.set_ingame_text("Hey i will choose the Smalest Score")
-		
-		
-	
-		
+		self.hud.set_ingame_text("Choosing the smallest score")
 	best_score = - INF if is_maximizing else INF  # Initialisiere besten Score
 	var best_move = null
-	# arteschlange für Visualisierungsschritte leeren
+	# Warteschlange für Visualisierungsschritte leeren
 	steps_queue.clear()
 	# Iteriere über alle Felder
-	for field in playfield.get_list_of_fields():
+	for field in board.get_list_of_fields():
 		if field.get_content() == "":  # Nur leere Felder prüfen
 			
 			# Probiere den aktuellen Zug aus
@@ -64,7 +55,7 @@ func make_move():
 				field.set_content("Player2")
 				
 			# Berechne den Score für dieses Feld
-			var score = minmax(playfield.get_list_of_fields(), 0, not is_maximizing)
+			var score = minmax(board.get_list_of_fields(), 0, not is_maximizing)
 			field.set_content("")  # Setze das Feld zurück
 			
 			print(score)
@@ -97,7 +88,7 @@ func make_move():
 		# Kein gültiger Zug gefunden
 		return null
 
-func minmax(board, depth, is_maximizing) -> int:
+func minmax(board2, depth, is_maximizing) -> int:
 	var result = check_winner()
 	if result != null:
 		if is_maximizing:
@@ -117,22 +108,22 @@ func minmax(board, depth, is_maximizing) -> int:
 
 	if is_maximizing:
 		var best_score = -INF
-		for field in board:
+		for field in board2:
 			if field is Field and field.get_content() == "":
 				field.set_content("Player1")
 
-				var score = minmax(board, depth + 1, false)
+				var score = minmax(board2, depth + 1, false)
 				field.set_content("")  # Feld zurücksetzen
 
 				best_score = max(best_score, score)
 		return best_score
 	else:
 		var best_score = INF
-		for field in board:
+		for field in board2:
 			if field is Field and field.get_content() == "":
 				field.set_content("Player2")
 
-				var score = minmax(board, depth + 1, true)
+				var score = minmax(board2, depth + 1, true)
 				field.set_content("")  # Feld zurücksetzen
 
 				best_score = min(best_score, score)
@@ -140,15 +131,14 @@ func minmax(board, depth, is_maximizing) -> int:
 
 
 func action():
-	#print("Action called: is_in_progress =", is_in_progress, ", best_field =", best_field)
 	if not is_in_progress:
 		is_in_progress = true
 		
-		if is_maximizing && game_manager.turn_counter == 1:
-			var random_field = randi()%9+1
-			var playfield = playfield.get_list_of_fields()
+		if is_maximizing and game_manager.turn_counter == 1:
+			var random_field = randi() % 9 + 1
+			var board = board.get_list_of_fields()
 			is_in_progress = false
-			return playfield[random_field]
+			return board[random_field]
 			
 		else:
 			
@@ -158,9 +148,9 @@ func action():
 	if timer_is_done:
 		is_in_progress = false
 		timer_is_done = false
-		playfield.hide_visualization()
+		board.hide_visualization()
 		field_scores = {}
-		hud.hide_ingame_test()
+		hud.hide_ingame_text()
 		return best_field
 
 func calc_total_fields_score():  # brauchen wir nicht mehr 
@@ -189,11 +179,11 @@ func process_visualization():
 		field.show_label()
 		if action == "highlight":
 			if field == best_field:
-				field.set_highlighted(true, Color(0, 1, 0))  # Feld hervorheben
+				field.set_highlight(true, Color(0, 1, 0))  # Feld hervorheben
 			else: 
-				field.set_highlighted(true)
+				field.set_highlight(true)
 		elif action == "reset" and not (field == best_field):
-			field.set_highlighted(false)  # Highlight zurücksetzen
+			field.set_highlight(false)  # Highlight zurücksetzen
 
 		# Starte den nächsten Schritt nach einer kurzen Pause
 		get_tree().create_timer(0.3).timeout.connect(process_visualization)

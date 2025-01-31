@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=3 uid="uid://dn1ws36f1bt4m"]
 
-[ext_resource type="Script" path="res://Skripts/Monte_Carlo_Tree_Search/tree_node.gd" id="1_hn631"]
+[ext_resource type="Script" path="res://Skripts/monte_carlo_tree_search/mcts_tree_node.gd" id="1_hn631"]
 
-[node name="TreeNode" type="GraphNode"]
+[node name="MctsTreeNode" type="GraphNode"]
 offset_right = 240.0
 offset_bottom = 240.0
 mouse_filter = 1

@@ -1,0 +1,28 @@
+[gd_scene load_steps=7 format=3 uid="uid://b70lqbvuw8kbu"]
+
+[ext_resource type="Script" path="res://Skripts/utility/game_manager.gd" id="1_udam6"]
+[ext_resource type="PackedScene" uid="uid://b4yxugplpvdbd" path="res://Scenes/ui/ui.tscn" id="2_hx363"]
+[ext_resource type="PackedScene" uid="uid://3hq1we7nm4l3" path="res://Scenes/game_elements/board.tscn" id="3_hevlx"]
+[ext_resource type="PackedScene" path="res://Scenes/player.tscn" id="4_5r7au"]
+[ext_resource type="Script" path="res://Skripts/utility/player.gd" id="4_lgyc5"]
+[ext_resource type="PackedScene" uid="uid://bud6i3cax52rk" path="res://Scenes/mcts/mcts_graph_edit.tscn" id="5_v6qqh"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_udam6")
+
+[node name="UI" parent="." instance=ExtResource("2_hx363")]
+
+[node name="Board" parent="." instance=ExtResource("3_hevlx")]
+position = Vector2(1370, 549)
+metadata/_edit_group_ = true
+
+[node name="Player1" parent="." node_paths=PackedStringArray("game_manager") instance=ExtResource("4_5r7au")]
+script = ExtResource("4_lgyc5")
+game_manager = NodePath("..")
+
+[node name="Player2" parent="." node_paths=PackedStringArray("game_manager") instance=ExtResource("4_5r7au")]
+script = ExtResource("4_lgyc5")
+game_manager = NodePath("..")
+
+[node name="MCTSGraphEditWindow" parent="." instance=ExtResource("5_v6qqh")]
+visible = false
