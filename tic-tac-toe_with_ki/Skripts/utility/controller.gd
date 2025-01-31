@@ -6,6 +6,9 @@ var game_manager: GameManager
 var player_name: String
 var win_combinations: Array[PackedInt32Array]
 
+@onready var symbol_x: PackedScene = preload("res://Scenes/game_elements/x_character.tscn")
+@onready var symbol_o: PackedScene = preload("res://Scenes/game_elements/o_character.tscn")
+
 # Konstruktor für jeden Algorithmus der noch kommen marg 
 func _init(game_manager: GameManager, player_name: String) -> void:
 	if game_manager and player_name:
@@ -34,3 +37,4 @@ func check_winner() -> Variant:
 			# Wenn ein Feld leer ist, gibt es noch kein Unentschieden
 			return null
 	return "draw"
+	

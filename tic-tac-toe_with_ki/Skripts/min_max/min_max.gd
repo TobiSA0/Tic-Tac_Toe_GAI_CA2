@@ -1,5 +1,5 @@
 extends Controller
-class_name Min_Miax
+class_name Min_Max
 
 
 var timer: Timer
@@ -33,7 +33,6 @@ func start_timer():
 
 func make_move():
 	# Maximierung oder Minimierung basierend auf dem Spieler
-	
 	if is_maximizing:
 		hud.set_ingame_text("Hey i will choose the Biggest Score")	
 	else:
@@ -53,11 +52,12 @@ func make_move():
 				field.set_content("Player1")
 			else:
 				field.set_content("Player2")
-				
+					
 			# Berechne den Score fuer dieses Feld
 			var score = minmax(board.get_list_of_fields(), 0, not is_maximizing)
-			field.set_content("")  # Setze das Feld zurueck
 			
+			field.set_content("")  # Setze das Feld zurueck
+			#field.hide_label()
 			print(score)
 			field_scores[field] = score
 			field.set_score(score)
@@ -66,7 +66,6 @@ func make_move():
 			if (is_maximizing and score > best_score) or (not is_maximizing and score < best_score):
 				best_score = score
 				best_move = field
-
 			# Schritte zur Visualisierung hinzufuegen
 			steps_queue.append({"field": field, "action": "highlight"})
 			#field.set_score(get_probability_for_field(field))
@@ -111,10 +110,10 @@ func minmax(board, depth, is_maximizing) -> int:
 		for field in board:
 			if field is Field and field.get_content() == "":
 				field.set_content("Player1")
-
+				
 				var score = minmax(board, depth + 1, false)
-				field.set_content("")  # Feld zuruecksetzen
-
+				field.set_content("")
+			
 				best_score = max(best_score, score)
 		return best_score
 	else:
@@ -122,12 +121,14 @@ func minmax(board, depth, is_maximizing) -> int:
 		for field in board:
 			if field is Field and field.get_content() == "":
 				field.set_content("Player2")
-
+				
+				
 				var score = minmax(board, depth + 1, true)
 				field.set_content("")  # Feld zuruecksetzen
-
+				
 				best_score = min(best_score, score)
 		return best_score
+		
 
 
 func action():
@@ -154,7 +155,6 @@ func action():
 		hud.hide_ingame_text()
 		return best_field
 
-
 func process_visualization():
 	if steps_queue.size() > 0:
 		var step = steps_queue.pop_front()  # Nimm den ersten Schritt aus der Warteschlange
@@ -163,7 +163,6 @@ func process_visualization():
 		var score = field.get_score()
 		
 		field.set_label(str(score))
-		 
 		field.show_label()
 		if action == "highlight":
 			if field == best_field:

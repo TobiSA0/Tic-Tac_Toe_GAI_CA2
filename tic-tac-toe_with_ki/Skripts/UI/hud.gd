@@ -13,8 +13,12 @@ signal reset_pressed
 @onready var reset_button: Button = $ResetButton
 @onready var graph_window_button: Button = $MCTSGraphWindowButton
 @onready var ingame_text_label: Label = $IngameText
+@onready var min_max_info_label_1:Label=$maxi_info
+@onready var min_max_info_label_2:Label=$mini_info
 
 func _ready() -> void:
+	min_max_info_label_1.hide()
+	min_max_info_label_2.hide()
 	button.pressed.connect(_on_play_button_pressed)
 	reset_button.pressed.connect(_on_reset_button_pressed)
 	graph_window_button.pressed.connect(_on_graph_button_pressed)

@@ -11,7 +11,7 @@ font_size = 90
 font_size = 45
 
 [sub_resource type="LabelSettings" id="LabelSettings_yxap3"]
-font_size = 30
+font_size = 20
 
 [sub_resource type="LabelSettings" id="LabelSettings_o0qag"]
 font_size = 50
@@ -23,9 +23,9 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -4.0
+offset_left = 2.0
 offset_top = -5.0
-offset_right = -4.0
+offset_right = 2.0
 offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -178,3 +178,19 @@ offset_bottom = 1016.0
 text = "Pick smallest score"
 label_settings = SubResource("LabelSettings_o0qag")
 horizontal_alignment = 1
+
+[node name="maxi_info" type="Label" parent="HUD"]
+offset_left = 220.0
+offset_top = 491.0
+offset_right = 595.0
+offset_bottom = 522.0
+text = "Maximirer = Win>0 - Lose <0 - Draw = 0"
+label_settings = SubResource("LabelSettings_yxap3")
+
+[node name="mini_info" type="Label" parent="HUD"]
+offset_left = 221.0
+offset_top = 600.0
+offset_right = 596.0
+offset_bottom = 631.0
+text = "Minimirer = Win< 0 - Lose >0 - Draw = 0"
+label_settings = SubResource("LabelSettings_yxap3")

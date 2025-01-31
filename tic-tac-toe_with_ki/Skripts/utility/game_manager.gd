@@ -55,6 +55,12 @@ func setup_game():
 	var selection = game_hud.get_selected_players()
 	player1.add_algorithm_to_player(selection[0]) 
 	player2.add_algorithm_to_player(selection[1])
+	
+	if player1.algorithm is Min_Max:
+		game_hud.min_max_info_label_1.show()
+	else:
+		game_hud.min_max_info_label_2.show()
+	
 	is_game_set_up = true
 
 ## schaut ob eine runde gewonnen ist indem es alle möglichen win kombinationen durch geht 
@@ -86,6 +92,7 @@ func _physics_process(delta: float) -> void:
 	if is_game_set_up:
 		if not game_is_won() and not check_draw():
 			if turn_counter % 2 != 0:
+				
 				await player1.turn()
 			else:
 				await player2.turn()
