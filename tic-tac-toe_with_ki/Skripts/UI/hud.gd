@@ -27,6 +27,7 @@ func _ready() -> void:
 	self.iteration_line_edit_two.hide()
 	self.graph_window_button_one.disabled = true
 	self.graph_window_button_two.disabled = true
+	self.reset_button.disabled = true
 	# connect signals
 	self.play_button.pressed.connect(_on_play_button_pressed)
 	self.reset_button.pressed.connect(_on_reset_button_pressed)
@@ -62,27 +63,42 @@ func _on_option_selected(index: int, option_button: OptionButton) -> void:
 				0: # human
 					self.max_info_label.visible = false
 					self.iteration_line_edit_one.visible = false
+					# to enable play button in case other selector is mcts and has 1000+ iterations entered
+					if self.player_selector_two.selected == 2:
+						_on_text_changed(self.iteration_line_edit_two.text, self.iteration_line_edit_two)
 				1: # minmax
 					self.max_info_label.visible = true
 					self.iteration_line_edit_one.visible = false
+					# to enable play button in case other selector is mcts and has 1000+ iterations entered
+					if self.player_selector_two.selected == 2:
+						_on_text_changed(self.iteration_line_edit_two.text, self.iteration_line_edit_two)
 				2: # mcts
 					self.max_info_label.visible = false
 					self.iteration_line_edit_one.visible = true
-					self.play_button.disabled = true
+					if (int(self.iteration_line_edit_one.text) < 1000) or (self.iteration_line_edit_two.visible and int(self.iteration_line_edit_two.text) < 1000):
+						self.play_button.disabled = true
 		"Selector2":
 			match index:
 				0: # human
 					self.min_info_label.visible = false
 					self.iteration_line_edit_two.visible = false
+					# to enable play button in case other selector is mcts and has 1000+ iterations entered
+					if self.player_selector_one.selected == 2:
+						_on_text_changed(self.iteration_line_edit_one.text, self.iteration_line_edit_one)
 				1: # minmax
 					self.min_info_label.visible = true
 					self.iteration_line_edit_two.visible = false
+					# to enable play button in case other selector is mcts and has 1000+ iterations entered
+					if self.player_selector_one.selected == 2:
+						_on_text_changed(self.iteration_line_edit_one.text, self.iteration_line_edit_one)
 				2: # mcts
 					self.min_info_label.visible = false
 					self.iteration_line_edit_two.visible = true
-					self.play_button.disabled = true
+					if (int(self.iteration_line_edit_two.text) < 1000) or (self.iteration_line_edit_one.visible and int(self.iteration_line_edit_one.text) < 1000):
+						self.play_button.disabled = true
 
 func _on_text_changed(new_text: String, line_edit: LineEdit) -> void:
+	var other_line_edit: LineEdit = self.iteration_line_edit_one if line_edit == self.iteration_line_edit_two else self.iteration_line_edit_two
 	var old_caret_position: int = line_edit.caret_column
 	var word: String = ""
 	var regex = RegEx.new()
@@ -94,8 +110,9 @@ func _on_text_changed(new_text: String, line_edit: LineEdit) -> void:
 		word += valid_character.get_string()
 	line_edit.set_text(word)
 	line_edit.caret_column = old_caret_position + diff
-	if len(new_text) > 0 and int(new_text)> 999:
-		self.play_button.disabled = false
+	if int(new_text) > 999:
+		if not other_line_edit.visible or int(other_line_edit.text) > 999:
+			self.play_button.disabled = false
 	else:
 		self.play_button.disabled = true
 	

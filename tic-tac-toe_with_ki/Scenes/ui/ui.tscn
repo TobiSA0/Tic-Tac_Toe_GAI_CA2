@@ -76,18 +76,15 @@ offset_left = 290.0
 offset_top = 450.0
 offset_right = 594.0
 offset_bottom = 482.0
-selected = 3
-item_count = 4
+selected = 0
+item_count = 3
 popup/item_0/text = "Human"
 popup/item_1/text = "MinMax"
 popup/item_1/id = 1
 popup/item_2/text = "MCTS"
 popup/item_2/id = 2
-popup/item_3/text = "None"
-popup/item_3/id = 3
 
 [node name="LineEdit1" type="LineEdit" parent="HUD"]
-visible = false
 layout_mode = 0
 offset_left = 290.0
 offset_top = 490.0
@@ -120,18 +117,15 @@ offset_left = 290.0
 offset_top = 560.0
 offset_right = 594.0
 offset_bottom = 592.0
-selected = 3
-item_count = 4
+selected = 0
+item_count = 3
 popup/item_0/text = "Human"
 popup/item_1/text = "MinMax"
 popup/item_1/id = 1
 popup/item_2/text = "MCTS"
 popup/item_2/id = 2
-popup/item_3/text = "None"
-popup/item_3/id = 3
 
 [node name="LineEdit2" type="LineEdit" parent="HUD"]
-visible = false
 layout_mode = 0
 offset_left = 290.0
 offset_top = 600.0

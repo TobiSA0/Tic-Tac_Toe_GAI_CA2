@@ -72,7 +72,7 @@ func setup_game():
 	if player1.algorithm is MCTSAlgorithm and player2.algorithm is MCTSAlgorithm:
 		self.mcts_next_button.visible = true
 		self.mcts_next_button.disabled = false
-
+	self.game_hud.play_button.disabled = true
 	is_game_set_up = true
 
 ## schaut ob eine runde gewonnen ist indem es alle möglichen win kombinationen durch geht 
@@ -108,6 +108,7 @@ func _physics_process(delta: float) -> void:
 			else:
 				await player2.turn()
 		else:
+			self.game_hud.reset_button.disabled = false
 			if game_is_won():
 				game_hud.show_ingame_text()
 				game_hud.set_ingame_text(winner + " is the Winner")
