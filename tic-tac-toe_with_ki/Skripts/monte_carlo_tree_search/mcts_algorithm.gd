@@ -1,7 +1,7 @@
 class_name MCTSAlgorithm
 extends Controller
 
-const DEBUG: bool = true
+const DEBUG: bool = false
 const MCTS_TREE_NODE = preload("res://Scenes/mcts/mcts_tree_node.tscn")
 
 @onready var enemy: Player = self.game_manager.player2 if self.player_name == "Player1" else self.game_manager.player1
@@ -21,6 +21,7 @@ func _ready() -> void:
 		self.next_button.pressed.connect(_on_next_button_pressed)
 
 func _on_next_button_pressed() -> void:
+	self.next_button.disabled = true
 	if self.game_manager.turn_counter % 2 != 0:
 		self.game_manager.player1.algorithm.is_turn = true
 	else:
@@ -28,12 +29,17 @@ func _on_next_button_pressed() -> void:
 
 # play best move for current board state
 func action():
+	if self.game_manager.turn_counter == 1:
+		self.next_button.disabled = true
+		
 	if enemy.algorithm is not MCTSAlgorithm or self.is_turn:
 		self.is_turn = false
 		var best_node: MCTSTreeNode = self.search()
 		# play best move
 		if self.DEBUG:
 			print("MCTS best move index: ", best_node.move_index)
+			
+		self.next_button.disabled = false
 		return board.get_list_of_fields()[best_node.move_index]
 
 func add_node(board: Array[String], parent_node: MCTSTreeNode, move_index: int) -> MCTSTreeNode:
